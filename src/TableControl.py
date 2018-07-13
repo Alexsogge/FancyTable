@@ -1,8 +1,6 @@
 from modules import *
+from extensiones import *
 import sys
-
-
-
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
@@ -19,7 +17,11 @@ if __name__ == "__main__":
     input_manager = TouchInputManager(sys.argv[1])
     input_manager.define_display(display[0], display[1])
     input_manager.calibrate(buffer)
-    #input_manager.load_calibration(28000, 25000)
+
+    extension_manager = ExtensionManager(buffer)
+
+
+    # input_manager.load_calibration(28000, 25000)
 
     buffer.set_pixel(5, 4, 5, 0, 0)
 
@@ -29,21 +31,24 @@ if __name__ == "__main__":
 
     def draw(x, y, color):
         dx, dy = input_manager.map_to_display(x, y)
-        #print("Draw to: ", dx,dy)
+        # print("Draw to: ", dx,dy)
         buffer.set_pixel(dx, dy, int(color)+7, 0, 0)
 
 
 
     while True:
         input_manager.read_inputs()
-        #print(input_manager.get_inputs().items())
+        # print(input_manager.get_inputs().items())
         for slot, tinput in input_manager.get_inputs().items():
             input_states = tinput.get_states()
             while True:
                 if input_states.empty():
                     break
-                state = input_states.get()
-                draw(state.x, state.y, slot)
+                input_action = input_states.get()
+                input_action.add_pixels(input_manager.map_to_display(input_action.x, input_action.y))
+                extension_manager.process_input(slot, input_action)
+                # state = input_states.get()
+                # draw(state.x, state.y, slot)
         buffer.clear_frame()
         buffer.upload_frame()
 

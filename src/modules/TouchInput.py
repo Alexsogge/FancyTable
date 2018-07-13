@@ -4,10 +4,11 @@ from enum import Enum
 from queue import Queue
 import time
 
+
 class ActionType(Enum):
-     PRESSED = 1
-     RELEASED = 2
-     MOVED = 3
+    PRESSED = 1
+    RELEASED = 2
+    MOVED = 3
 
 
 class Action:
@@ -16,9 +17,13 @@ class Action:
         self.x = x
         self.y = y
         self.type = atype
+        self.pixels = None
 
     def __str__(self):
         return "Action " + str(self.type) + " on " + str(self.x) + " | "+ str(self.y)
+
+    def add_pixels(self, pixels):
+        self.pixels = pixels
 
 
 class Display:
@@ -35,14 +40,30 @@ class Display:
         self.height = height
 
     def set_input_range(self, width, height):
+        """
+        Defines the dimensions of the inputdevice
+        :param width: width of inputdevice
+        :param height: height of inputdevice
+        :return: None
+        """
         self.input_width = width
         self.input_height = height
 
     def add_calibration_dot(self, x, y):
-        print("Add calibrationpoint ", x ,y)
+        """
+        Add a new calibrationdot
+        :param x:
+        :param y:
+        :return:
+        """
+        print("Add calibrationpoint ", x, y)
         self.calibration_dots.append((x, y))
 
     def perform_calibration(self):
+        """
+        Read the first four calibrationdots as corners oft the input and calculates the dimension of the input device
+        :return: False if ne number of readed calibrationdots isn't equal to four
+        """
         if len(self.calibration_dots) != 4:
             return False
 
@@ -52,16 +73,23 @@ class Display:
                             self.calibration_dots[3][1] - self.calibration_dots[1][1]) / 2
 
         print("Calibrated:", self.input_width, self.input_height, "\n\r")
+        return True
 
     def load_calibration(self, width, height):
+        """
+        Restore a calibration
+        :param width:
+        :param height:
+        :return:
+        """
         self.input_width = width
         self.input_height = height
 
     def get_pixel_from_input(self, x, y):
-        #print(self.width, self.input_width)
+        # print(self.width, self.input_width)
         px = (self.width / self.input_width ) * x
         py = (self.height / self.input_height) * y
-        #print("Map from ", x, y, " to ", px, py)
+        # print("Map from ", x, y, " to ", px, py)
         if px < 0:
             px = 0
         if px > self.width:
@@ -131,7 +159,6 @@ class TouchInputManager:
     inputs = {0: TInput(0)}
 
     def __init__(self, device_path):
-        print(mtdev)
         self.device = mtdev.Device(device_path)
 
     def read_inputs(self, idle=50):
@@ -158,7 +185,7 @@ class TouchInputManager:
 
             if data.type == mtdev.MTDEV_TYPE_EV_ABS and data.code == mtdev.MTDEV_CODE_POSITION_X:
                 self.inputs[self.slot].move('x', data.value)
-                #print("X to ", data.value)
+                # print("X to ", data.value)
 
             if data.type == mtdev.MTDEV_TYPE_EV_ABS and data.code == mtdev.MTDEV_CODE_POSITION_Y:
                 self.inputs[self.slot].move('y', data.value)
@@ -180,8 +207,8 @@ class TouchInputManager:
         >>> i2.move('y', 5)
         >>> tmgr.inputs = {0: i1, 1: i2}
         >>> inp = tmgr.get_inputs()
-        >>> print([str(a) for a in list(inp[1].states.queue)])
-        >>> inp[0].states == inp[1].states
+        >>> inp[0].states != inp[1].states
+        True
         """
         return self.inputs
 
@@ -197,9 +224,6 @@ class TouchInputManager:
     def calibrate(self, framebuffer):
         if self.display is None:
             return False
-
-        def set_input_corner(x, y):
-            self.display.add_calibration_dot(x, y)
 
         def read_corner(corner_x, corner_y):
             framebuffer.clear_frame()
@@ -233,7 +257,6 @@ class TouchInputManager:
             framebuffer.upload_frame()
             time.sleep(3)
 
-
         buffer_w, buffer_h = framebuffer.get_dimensions()
         if buffer_w < 2 or buffer_h < 2:
             return False
@@ -249,11 +272,7 @@ class TouchInputManager:
 
         return True
 
-
-
-
     def map_to_display(self, x, y):
         if self.display is None:
             return None
         return self.display.get_pixel_from_input(x, y)
-

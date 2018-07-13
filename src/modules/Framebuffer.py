@@ -31,10 +31,8 @@ class Frame:
     def add_output(self, output):
         self.frame_outputs.append(output)
 
-
     def get_dimensions(self):
         return len(self.frame_matrix[0]), len(self.frame_matrix)
-
 
     def clear_frame(self):
         if self.tails:
@@ -55,12 +53,14 @@ class Frame:
         self.frame_matrix[y][x]['r'] = r
         self.frame_matrix[y][x]['g'] = g
         self.frame_matrix[y][x]['b'] = b
-        #print(self.frame_matrix)
-
+        # print(self.frame_matrix)
 
     def upload_frame(self):
         for frame_output in self.frame_outputs:
             if frame_output is not None:
                 frame_output.upload(self.frame_matrix)
+
+    def get_dimensions(self):
+        return len(self.frame_matrix[0]), len(self.frame_matrix)
 
 
