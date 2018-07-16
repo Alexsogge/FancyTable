@@ -42,7 +42,6 @@ class MenueSwitch:
 
 class Menue:
 
-
     frame_buffer = None
     is_active = True
     extensions = None
@@ -52,7 +51,6 @@ class Menue:
     def __init__(self, frame_buffer, extensions):
         self.frame_buffer = frame_buffer
         self.extensions = extensions
-
 
     def set_active(self):
         self.is_active = True
@@ -106,8 +104,7 @@ class ExtensionManager:
         self.frame_buffer = framebuffer
         Extension.set_global_framebuffer(framebuffer)
         self.menue = Menue(framebuffer, self.extensions)
-
-
+        self.menue.set_active()
 
     def process_input(self, slot, action):
         if self.menue.get_active():
@@ -121,7 +118,6 @@ class ExtensionManager:
             if self.check_menue_call(slot, action):
                 return
             self.extensions[self.current_active_extension].process_input(slot, action)
-
 
 
     def loop(self):

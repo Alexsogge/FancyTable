@@ -1,6 +1,7 @@
+from abc import ABC, abstractmethod
 
 
-class Extension:
+class Extension(ABC):
     frame_buffer = None
 
     def __init__(self):
@@ -57,12 +58,15 @@ class Extension:
         return self.icon_x <= x <= self.icon_x + self.icon_width and \
                 self.icon_y < y < self.icon_y + self.icon_height
 
+    @abstractmethod
     def set_active(self):
         pass
 
+    @abstractmethod
     def process_input(self, slot, action):
         pass
 
+    @abstractmethod
     def loop(self):
         pass
 

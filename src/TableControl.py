@@ -29,11 +29,6 @@ if __name__ == "__main__":
 
     buffer.upload_frame()
 
-    def draw(x, y, color):
-        dx, dy = input_manager.map_to_display(x, y)
-        # print("Draw to: ", dx,dy)
-        buffer.set_pixel(dx, dy, int(color)+7, 0, 0)
-
 
 
     while True:
@@ -49,7 +44,8 @@ if __name__ == "__main__":
                 extension_manager.process_input(slot, input_action)
                 # state = input_states.get()
                 # draw(state.x, state.y, slot)
-        buffer.clear_frame()
+        #buffer.clear_frame()
+        extension_manager.loop()
         buffer.upload_frame()
 
 

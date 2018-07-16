@@ -55,6 +55,19 @@ class Frame:
         self.frame_matrix[y][x]['b'] = b
         # print(self.frame_matrix)
 
+    def set_pixel_col(self, x, y, col):
+        self.set_pixel(self, x, y, col[0], col[1], col[2])
+
+    def draw_rect(self, x, y, w, h, r, g, b, fill=True):
+        for i in range(w):
+            for j in range(h):
+                if fill is False and ((i != 0 and j != 0) and (i != w and j != h)):
+                    continue
+                self.set_pixel(x+i, y+j, r, g, b)
+
+    def draw_rect_col(self, x, y, w, h, col, fill=True):
+        self.draw_rect(x, y, w, h, col[0], col[1], col[2], fill)
+
     def upload_frame(self):
         for frame_output in self.frame_outputs:
             if frame_output is not None:

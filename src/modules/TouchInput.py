@@ -17,12 +17,15 @@ class Action:
         self.x = x
         self.y = y
         self.type = atype
-        self.pixels = None
+        self.pixels = (x, y)
 
     def __str__(self):
         return "Action " + str(self.type) + " on " + str(self.x) + " | "+ str(self.y)
 
     def add_pixels(self, pixels):
+        """
+        :rtype: (x, y)
+        """
         self.pixels = pixels
 
 
