@@ -1,5 +1,6 @@
 from extensiones import *
 from modules import Action, ActionType, Frame
+import importlib
 
 
 class MenueSwitch:
@@ -102,9 +103,10 @@ class ExtensionManager:
 
     def __init__(self, framebuffer):
         self.frame_buffer = framebuffer
-        Extension.set_global_framebuffer(framebuffer)
+        Extension.set_global_frame_buffer(framebuffer)
         self.menue = Menue(framebuffer, self.extensions)
         self.menue.set_active()
+        pass
 
     def process_input(self, slot, action):
         if self.menue.get_active():
@@ -134,4 +136,14 @@ class ExtensionManager:
             self.menue.set_active()
             return True
         return False
+
+    def load_from_file(self, file_path):
+        f = open(file_path, 'r')
+        for ext in f:
+            ext = ext.replace('\n', '')
+            # print("Module:", __import__("extensiones"))
+            class_ = getattr(__import__("extensiones"), ext)
+            # print("Class:", class_)
+            self.extensions.append(class_())
+        f.close()
 

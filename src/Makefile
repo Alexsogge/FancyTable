@@ -10,7 +10,7 @@ compile:
 
 test:
 	$(TEST_CMD) *.py
-	$(TEST_CMD) modules/*.py
+	$(TEST_CMD) extensiones/*.py
 
 checkstyle:
 	$(CHECKSTYLE_CMD) *.py

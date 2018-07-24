@@ -196,22 +196,22 @@ class TouchInputManager:
 
     def get_inputs(self):
         """
-        >>> tmgr = TouchInputManager("/dev/input/event1")
-        >>> i1 = TInput(0)
-        >>> i1.press()
-        >>> i1.move('x', 0)
-        >>> i1.move('y', 1)
-        >>> i1.move('x', 2)
-        >>> i1.move('y', 3)
+        # >>> tmgr = TouchInputManager("/dev/input/event1")
+        # >>> i1 = TInput(0)
+        # >>> i1.press()
+        # >>> i1.move('x', 0)
+        # >>> i1.move('y', 1)
+        # >>> i1.move('x', 2)
+        # >>> i1.move('y', 3)
 
-        >>> i2 = TInput(1)
-        >>> i2.press()
-        >>> i2.move('x', 4)
-        >>> i2.move('y', 5)
-        >>> tmgr.inputs = {0: i1, 1: i2}
-        >>> inp = tmgr.get_inputs()
-        >>> inp[0].states != inp[1].states
-        True
+        # >>> i2 = TInput(1)
+        # >>> i2.press()
+        # >>> i2.move('x', 4)
+        # >>> i2.move('y', 5)
+        #  >>> tmgr.inputs = {0: i1, 1: i2}
+        # >>> inp = tmgr.get_inputs()
+        # >>> inp[0].states != inp[1].states
+        # True
         """
         return self.inputs
 
