@@ -12,9 +12,8 @@ class RainbowExtension(Extension):
     switch_step = 1
     last_frame = 0
 
-    color_lenght = 2000
+    color_lengh = 2000
     color_step = 0
-
 
     def set_active(self):
         self.last_frame = current_milli_time
@@ -25,7 +24,7 @@ class RainbowExtension(Extension):
 
     def loop(self):
         if current_milli_time() > self.last_frame + self.switch_speed:
-            r, g, b = colorsys.hsv_to_rgb(self.color_step / self.color_lenght, 1, 1)
+            r, g, b = colorsys.hsv_to_rgb(self.color_step / self.color_lengh, 1, 1)
             R, G, B = int(255 * r), int(255 * g), int(255 * b)
             column = []
             for col in range(1, self.framebuffer.get_dimensions()[0]):
@@ -34,7 +33,7 @@ class RainbowExtension(Extension):
                 column.append({'r': R, 'g': G, 'b': B})
             self.framebuffer.set_matrix_column(column)
             self.last_frame = current_milli_time()
-            self.color_step = (self.color_step + 1) % self.color_lenght
+            self.color_step = (self.color_step + 1) % self.color_lengh
 
 
 
