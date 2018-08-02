@@ -36,9 +36,7 @@ if __name__ == "__main__":
         # print(input_manager.get_inputs().items())
         for slot, tinput in input_manager.get_inputs().items():
             input_states = tinput.get_states()
-            while True:
-                if input_states.empty():
-                    break
+            while not input_states.empty():
                 input_action = input_states.get()
                 input_action.add_pixels(input_manager.map_to_display(input_action.x, input_action.y))
                 extension_manager.process_input(slot, input_action)
