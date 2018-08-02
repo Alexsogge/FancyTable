@@ -30,7 +30,7 @@ class LEDFrameOutput:
     def upload(self, frame_matrix):
         for y, row in enumerate(frame_matrix):
             for x, col in enumerate(row):
-                pix = frame_matrix[x][y]
+                pix = col
                 if y % 2 == 0:
                     x = len(row) - x
                 self.strip.setPixelColorRGB(y*x, pix['r'], pix['g'], pix['b'])
