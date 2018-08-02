@@ -7,11 +7,12 @@ if __name__ == "__main__":
         print("Usage: python3 TableControl.py <device path>")
         sys.exit(1)
 
-    display = (22, 10)
+    display = (21, 12)
     buffer = Frame(display[0], display[1])
-    buffer.set_tales(True, 0.01)
+    # buffer.set_tales(True, 0.01)
 
-    output = EmulatedOutput(display[0], display[1])
+    # output = EmulatedOutput(display[0], display[1])
+    output = LEDFrameOutput(display[0], display[1])
     buffer.add_output(output)
 
     input_manager = TouchInputManager(sys.argv[1])
@@ -23,9 +24,9 @@ if __name__ == "__main__":
 
     # input_manager.load_calibration(28000, 25000)
 
-    buffer.set_pixel(5, 4, 5, 0, 0)
+    #buffer.set_pixel(5, 4, 5, 0, 0)
 
-    pixel = [0, 0]
+    #pixel = [0, 0]
 
     buffer.upload_frame()
 
