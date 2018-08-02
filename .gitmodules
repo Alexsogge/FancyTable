@@ -1,3 +1,6 @@
 [submodule "rpi_ws281x"]
 	path = rpi_ws281x
-	url = https://github.com/jgarff/rpi_ws281x.git
+	url = https://github.com/jgarff/rpi_ws281x
+[submodule "python-mtdev"]
+	path = python-mtdev
+	url = https://github.com/tito/python-mtdev.git
