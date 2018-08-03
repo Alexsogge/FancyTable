@@ -33,18 +33,18 @@ if __name__ == "__main__":
 
 
     while True:
-        input_manager.read_inputs()
+        #input_manager.read_inputs()
         # print(input_manager.get_inputs().items())
-        for slot, tinput in input_manager.get_inputs().items():
-            input_states = tinput.get_states()
-            while not input_states.empty():
-                input_action = input_states.get()
-                input_action.add_pixels(input_manager.map_to_display(input_action.x, input_action.y))
-                extension_manager.process_input(slot, input_action)
-                # state = input_states.get()
-                # draw(state.x, state.y, slot)
-        #buffer.clear_frame()
-        extension_manager.loop()
-        buffer.upload_frame()
-
+        #for slot, tinput in input_manager.get_inputs().items():
+        #    input_states = tinput.get_states()
+        #    while not input_states.empty():
+        #        input_action = input_states.get()
+        #        input_action.add_pixels(input_manager.map_to_display(input_action.x, input_action.y))
+        #        extension_manager.process_input(slot, input_action)
+        #        # state = input_states.get()
+        #        # draw(state.x, state.y, slot)
+        ##buffer.clear_frame()
+        #extension_manager.loop()
+        #buffer.upload_frame()
+        pass
 
