@@ -14,7 +14,7 @@ class Extension(ABC):
         self.icon_y = None
         self.icon_width = 10
         self.icon_height = 10
-        self.icon_pic = self.read_icon("./icons/nonpic.ppm")
+        self.icon_pic = self.read_icon("../icons/nonpic.ppm")
 
     @staticmethod
     def set_global_frame_buffer(buffer: Framebuffer.Frame):
@@ -55,6 +55,7 @@ class Extension(ABC):
         self.icon_height = height
 
     def clicked_on_icon(self, x, y):
+        print(self.icon_x, "<=", x, "<=", self.icon_x + self.icon_width, "and", self.icon_y, "<", y, "<", self.icon_y + self.icon_height)
         return self.icon_x <= x <= self.icon_x + self.icon_width and \
                 self.icon_y < y < self.icon_y + self.icon_height
 
@@ -113,6 +114,8 @@ class Extension(ABC):
                 if len(icon[x]) <= y:
                     icon[x].append([])
                 icon[x][y].append(int(line))
+                # print(icon[x][y])
+                # icon[x][y] = reversed(icon[x][y])
                 readed_lines += 1
             pic.close()
             return icon

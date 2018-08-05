@@ -1,4 +1,5 @@
+SingleColorExtension
 PaintExtension
+WuerfelnExtension
 RainbowExtension
 RaindropsExtension
-WuerfelnExtension

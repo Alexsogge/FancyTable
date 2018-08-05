@@ -2,6 +2,7 @@ import mtdev
 import sys
 from enum import Enum
 from queue import Queue
+from .Framebuffer import Frame
 import time
 
 
@@ -20,7 +21,7 @@ class Action:
         self.pixels = (x, y)
 
     def __str__(self):
-        return "Action " + str(self.type) + " on " + str(self.x) + " | "+ str(self.y)
+        return "Action " + str(self.type) + " on " + str(self.x) + " | "+ str(self.y) + " -> "+ str(self.pixels)
 
     def add_pixels(self, pixels):
         """
@@ -108,10 +109,13 @@ class Display:
 class TInput:
 
     mt_class = 0
-    x = 0
-    y = 0
+    x = None
+    y = None
 
     states = None
+
+    queued_pess = False
+
 
     def __init__(self, mt_class):
         self.mt_class = mt_class
@@ -122,14 +126,26 @@ class TInput:
             self.x = value
         if axis == 'y':
             self.y = value
+        if self.x is None or self.y is None:
+            return
+
+        if self.queued_pess:
+            self.states.put(Action(self.x, self.y, ActionType.PRESSED))
+            self.queued_pess = False
+            return
+
         self.states.put(Action(self.x, self.y, ActionType.MOVED))
         # print(str(self.mt_class) + " moved to x: " + str(self.x) + "  y: " + str(self.y))
 
     def press(self):
-        self.states.put(Action(self.x, self.y, ActionType.PRESSED))
+        self.queued_pess = True
+        self.x = None
+        self.y = None
         # print(str(self.mt_class) + " pressed on x: " + str(self.x) + "  y: " + str(self.y))
 
     def release(self):
+        if self.x is None or self.y is None:
+            return
         self.states.put(Action(self.x, self.y, ActionType.RELEASED))
         # print(str(self.mt_class) + " released on x: " + str(self.x) + "  y: " + str(self.y))
 
@@ -164,7 +180,7 @@ class TouchInputManager:
     def __init__(self, device_path):
         self.device = mtdev.Device(device_path)
 
-    def read_inputs(self, idle=50):
+    def read_inputs(self, idle=1):
         if self.device.idle(idle):
             return
         while True:
@@ -224,14 +240,14 @@ class TouchInputManager:
     def load_calibration(self, width, height):
         self.display.load_calibration(width, height)
 
-    def calibrate(self, framebuffer):
+    def calibrate(self, framebuffer: Frame):
         if self.display is None:
             return False
 
         def read_corner(corner_x, corner_y):
             framebuffer.clear_frame()
 
-            framebuffer.set_pixel(corner_x, corner_y, 254, 254, 254)
+            framebuffer.set_pixel(corner_x, corner_y, 12, 4, 100)
             framebuffer.upload_frame()
             self.read_inputs(200)
             self.clear_inputs()
@@ -264,9 +280,13 @@ class TouchInputManager:
         if buffer_w < 2 or buffer_h < 2:
             return False
 
+        print("Read Corner 1")
         read_corner(0, 0)
+        print("Read Corner 2")
         read_corner(-1, 0)
+        print("Read Corner 3")
         read_corner(0, -1)
+        print("Read Corner 4")
         read_corner(-1, -1)
         print("Calibrate....\n\r")
 

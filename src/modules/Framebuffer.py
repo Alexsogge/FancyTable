@@ -81,6 +81,13 @@ class Frame:
         :param g: green value
         :param b: blue value
         """
+        x = int(x)
+        y = int(y)
+        if y < 0 or y >= len(self.frame_matrix):
+            return
+        if x < 0 or x >= len(self.frame_matrix[y]):
+            return
+
         self.frame_matrix[y][x]['r'] = r
         self.frame_matrix[y][x]['g'] = g
         self.frame_matrix[y][x]['b'] = b
@@ -93,7 +100,7 @@ class Frame:
         :param y: row
         :param col: (red, green, blue)
         """
-        self.set_pixel(self, x, y, col[0], col[1], col[2])
+        self.set_pixel(x, y, col[0], col[1], col[2])
 
     def draw_rect(self, x, y, w, h, r, g, b, fill=True):
         """
@@ -107,11 +114,11 @@ class Frame:
         :param b: blue
         :param fill: fill out rectangle (Default: True)
         """
-        for i in range(w):
-            for j in range(h):
+        for i in range(int(w)):
+            for j in range(int(h)):
                 if fill is False and ((i != 0 and j != 0) and (i != w and j != h)):
                     continue
-                self.set_pixel(x+i, y+j, r, g, b)
+                self.set_pixel(x + i, y + j, r, g, b)
 
     def draw_rect_col(self, x, y, w, h, col, fill=True):
         """
@@ -131,6 +138,7 @@ class Frame:
         """
         for frame_output in self.frame_outputs:
             if frame_output is not None:
+                # print("Upload to", type(frame_output))
                 frame_output.upload(self.frame_matrix)
 
     def get_matrix(self):
@@ -147,7 +155,7 @@ class Frame:
         :param y: row
         :return: {'r': redval, 'g': greenval, 'b': blueval}
         """
-        return self.frame_matrix[y][x]
+        return self.frame_matrix[int(y)][int(x)]
 
     def set_matrix_row(self, row, pixels):
         """
@@ -168,7 +176,7 @@ class Frame:
             for i, row in enumerate(self.frame_matrix):
                 row[col] = pixels[i]
 
-    def get_matrix_row(self, row, pixels):
+    def get_matrix_row(self, row):
         """
         Returns the color of an entire row
         :param row: the row which should be returned
@@ -176,7 +184,7 @@ class Frame:
         if len(self.frame_matrix) > row:
             return self.frame_matrix[row]
 
-    def get_matrix_column(self, col, pixels):
+    def get_matrix_column(self, col):
         """
         Returns the color of an entire column
         :param col: the column which should be returned

@@ -21,7 +21,7 @@ class LEDFrameOutput:
         self.width = width
         self.height = height
 
-        self.strip = Adafruit_NeoPixel(width*height, self.LED_PIN, self.LED_FREQ_HZ, self.LED_DMA, self.LED_INVERT,
+        self.strip = Adafruit_NeoPixel(width*height+1, self.LED_PIN, self.LED_FREQ_HZ, self.LED_DMA, self.LED_INVERT,
                                   self.LED_BRIGHTNESS, self.LED_CHANNEL)
         # Intialize the library (must be called once before other functions).
         self.strip.begin()
@@ -31,8 +31,10 @@ class LEDFrameOutput:
         for y, row in enumerate(frame_matrix):
             for x, col in enumerate(row):
                 pix = col
-                if y % 2 == 0:
-                    x = len(row) - x
-                self.strip.setPixelColorRGB(y*x, pix['r'], pix['g'], pix['b'])
+                if y % 2 == 1:
+                    x = len(row) - 1 - x
+                led_num = y * self.width + x
+                self.strip.setPixelColorRGB(led_num, pix['r'], pix['g'], pix['b'])
+                # print("Write on", led_num, pix)
         self.strip.show()
 
