@@ -195,4 +195,10 @@ class Frame:
                 column.append(row[col])
             return column
 
+    def inc_diming(self, val):
+        for frame_output in self.frame_outputs:
+            if frame_output is not None:
+                # print("Upload to", type(frame_output))
+                frame_output.inc_dimming(val)
+
 

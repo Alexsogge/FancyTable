@@ -1,10 +1,12 @@
 from abc import ABC, abstractmethod
 from modules import Framebuffer
+from modules import ExtensionManager
 
 
 
 class Extension(ABC):
     frame_buffer = None
+    extension_manager = None
 
     def __init__(self):
         """
@@ -25,6 +27,15 @@ class Extension(ABC):
         global frame_buffer
         frame_buffer = buffer
 
+    @staticmethod
+    def set_global_extension_manager(mgr: ExtensionManager):
+        """
+        Sets the frame buffer for all extensions
+        :param mgr:
+        """
+        global extension_manager
+        extension_manager = mgr
+
     @property
     def framebuffer(self) -> Framebuffer.Frame:
         """
@@ -33,6 +44,15 @@ class Extension(ABC):
         """
         global frame_buffer
         return frame_buffer
+
+    @property
+    def extensionmanager(self) -> ExtensionManager:
+        """
+        returns the global frame buffer
+        :rtype: Framebuffer
+        """
+        global extension_manager
+        return extension_manager
 
     def get_icon(self):
         """

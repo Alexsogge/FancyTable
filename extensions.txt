@@ -1,5 +1,7 @@
+SettingsExtension
 SingleColorExtension
 PaintExtension
 WuerfelnExtension
 RainbowExtension
 RaindropsExtension
+GameOfLifeExtension

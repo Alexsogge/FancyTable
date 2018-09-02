@@ -78,7 +78,7 @@ class RaindropsExtension(Extension):
 
 
     def set_active(self):
-        pass
+        self.framebuffer.set_tales(True, 20)
 
     def process_input(self, slot, action):
         if action.type == ActionType.PRESSED:
@@ -92,7 +92,8 @@ class RaindropsExtension(Extension):
         i = 0
         while i < len(self.active_raindrops):
             raindrop = self.active_raindrops[i]
-            if raindrop.radius > max(self.framebuffer.get_dimensions()):
+            if raindrop.radius > math.sqrt(self.framebuffer.get_dimensions()[0]**2 + self.framebuffer.get_dimensions()[1]**2):
+            #if raindrop.radius > max(self.framebuffer.get_dimensions()):
                 self.active_raindrops.remove(raindrop)
                 i -= 1
             else:

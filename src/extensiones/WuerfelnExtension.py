@@ -49,7 +49,7 @@ class WuerfelnExtension(Extension):
                 self.framebuffer.draw_rect(self.dice_pos[0], self.dice_pos[1], self.dice_size, self.dice_size, 0, 0, 0)
                 self.draw_dice(random.randint(1, 6))
                 self.passed_cycles += 1
-                if random.random() > 0.95:
+                if random.random() > 0.85:
                     self.roll = False
                 else:
                     self.roll_start = current_milli_time()

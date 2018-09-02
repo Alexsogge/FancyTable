@@ -17,6 +17,8 @@ class LEDFrameOutput:
     width = 0
     height = 0
 
+    dimming = 0.0005
+
     def __init__(self, width, height):
         self.width = width
         self.height = height
@@ -34,7 +36,13 @@ class LEDFrameOutput:
                 if y % 2 == 1:
                     x = len(row) - 1 - x
                 led_num = y * self.width + x
-                self.strip.setPixelColorRGB(led_num, pix['r'], pix['g'], pix['b'])
+                R, G, B = max(min(int(255 * pix['r'] * self.dimming), 255), 0), max(min(int(255 * pix['g'] * self.dimming), 255), 0), \
+                          max(min(int(255 * pix['b'] * self.dimming), 255), 0)
+                self.strip.setPixelColorRGB(led_num, R, G, B)
                 # print("Write on", led_num, pix)
         self.strip.show()
+
+    def inc_dimming(self, val):
+        self.dimming += val
+        self.dimming = max(min(self.dimming, 1), 0)
 

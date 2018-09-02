@@ -136,6 +136,7 @@ class ExtensionManager:
     def __init__(self, framebuffer):
         self.frame_buffer = framebuffer
         Extension.set_global_frame_buffer(framebuffer)
+        Extension.set_global_extension_manager(self)
         self.load_from_file("../extensions.txt")
         self.menue = Menue(framebuffer, self.extensions)
         self.menue.set_active()
@@ -183,3 +184,6 @@ class ExtensionManager:
             self.extensions.append(class_())
         f.close()
 
+    def close_extension(self):
+        self.menue_switch = None
+        self.menue.set_active()

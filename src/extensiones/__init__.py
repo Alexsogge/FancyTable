@@ -4,3 +4,5 @@ from .WuerfelnExtension import WuerfelnExtension
 from .RainbowExtension import RainbowExtension
 from .RaindropsExtension import RaindropsExtension
 from .SingleColorExtension import SingleColorExtension
+from .SettingsExtension import SettingsExtension
+from .GameOfLifeExtension import GameOfLifeExtension
