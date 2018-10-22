@@ -2,13 +2,13 @@
 This project transforms an ordinary IKEA LACK Coffee table to a smart lighting table.
 
 
-# IKEA LACK
+## IKEA LACK
 We use an IKEA LACK table because it only consists of cardboard inside. After cutting out a hole in the top, the cardboard can easily removed and creates enought space for the lighting.
 
-# Lighting
+## Lighting
 The lighting consists of smart WS2812B 5050 RGB LEDs. These LEDs can be addressed individually. We arrange the LEDs as grid and seperate them from each other. On top will be placed a frosted glas plate or satined plexiglass, to diffuse the light and create some kind of pixel pattern.
 
-# Smart functionality
+## Smart functionality
 We will use an Raspberry Pi to controll the LEDs. A simple microcontrolle would be  sufficient but we want additionally host an multitouch input device and a webpage for controlling.
 
 #How To
@@ -27,4 +27,3 @@ We will need following things:
 
 
  
-Fancy lighting table with some smart features
