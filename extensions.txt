@@ -5,3 +5,4 @@ WuerfelnExtension
 RainbowExtension
 RaindropsExtension
 GameOfLifeExtension
+ScreenSaverExtension

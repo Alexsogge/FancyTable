@@ -195,6 +195,7 @@ class Frame:
                 column.append(row[col])
             return column
 
+
     def inc_diming(self, val):
         for frame_output in self.frame_outputs:
             if frame_output is not None:

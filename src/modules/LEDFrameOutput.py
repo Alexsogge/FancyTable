@@ -17,7 +17,7 @@ class LEDFrameOutput:
     width = 0
     height = 0
 
-    dimming = 0.0005
+    dimming = 0.003
 
     def __init__(self, width, height):
         self.width = width
@@ -30,12 +30,13 @@ class LEDFrameOutput:
 
 
     def upload(self, frame_matrix):
+        max_led = self.width * self.height
         for y, row in enumerate(frame_matrix):
             for x, col in enumerate(row):
                 pix = col
                 if y % 2 == 1:
                     x = len(row) - 1 - x
-                led_num = y * self.width + x
+                led_num = (self.height - 1 - y) * self.width + x
                 R, G, B = max(min(int(255 * pix['r'] * self.dimming), 255), 0), max(min(int(255 * pix['g'] * self.dimming), 255), 0), \
                           max(min(int(255 * pix['b'] * self.dimming), 255), 0)
                 self.strip.setPixelColorRGB(led_num, R, G, B)

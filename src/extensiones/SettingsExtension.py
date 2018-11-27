@@ -23,7 +23,7 @@ class SettingsExtension(Extension):
         if action.pixels[0] <= 2 and action.pixels[1] <= 2:
             self.extensionmanager.close_extension()
         elif abs(self.last_pointer[1] - action.y) > 200:
-            self.framebuffer.inc_diming(int((self.last_pointer[1] - action.y) / abs(self.last_pointer[1] - action.y)) * 0.00001)
+            self.framebuffer.inc_diming(int((self.last_pointer[1] - action.y) / abs(self.last_pointer[1] - action.y)) * 0.00003)
             updated = True
         if updated:
             self.last_pointer = (action.x, action.y)
