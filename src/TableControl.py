@@ -23,7 +23,7 @@ if __name__ == "__main__":
     extension_manager = ExtensionManager(buffer)
 
 
-    input_manager.load_calibration(34000, 34000)
+    input_manager.load_calibration(32000, 34000)
 
     #buffer.set_pixel(5, 4, 5, 0, 0)
 
