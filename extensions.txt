@@ -6,3 +6,4 @@ RainbowExtension
 RaindropsExtension
 GameOfLifeExtension
 ScreenSaverExtension
+BottleGlowExtension

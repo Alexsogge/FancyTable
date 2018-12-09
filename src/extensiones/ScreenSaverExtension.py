@@ -18,7 +18,7 @@ class ScreenSaverExtension(Extension):
 
     def __init__(self):
         super().__init__()
-        # self.icon_pic = self.read_icon("../icons/rainbow.ppm")
+        self.icon_pic = self.read_icon("../icons/screensaver.ppm")
         self.dimx, self.dimy = self.framebuffer.get_dimensions()
         self.dots = []
         self.startpoints = {}
@@ -28,6 +28,7 @@ class ScreenSaverExtension(Extension):
         self.color_step = 0
         self.startpoints.clear()
         self.dots = []
+        self.framebuffer.set_tales(True, 30)
 
     def process_input(self, slot, action):
         if action.type == ActionType.PRESSED:
@@ -41,7 +42,7 @@ class ScreenSaverExtension(Extension):
             self.dots.append(dot)
 
     def loop(self):
-        if current_milli_time() > self.last_frame + self.movement_speed:
+        if True or current_milli_time() > self.last_frame + self.movement_speed:
             self.framebuffer.clear_frame()
             for dot in self.dots:
                 dot.process(self.startpoints)
@@ -69,23 +70,26 @@ class Dot:
 
     def __init__(self, x, y, framebuffer, r, g, b, angle, movement):
         self.pos = [x*1000, y*1000]
-        self.movement_step = movement
+        self.movement_step = movement/40
         self.direction = angle
         self.framebuffer = framebuffer
         self.dimx, self.dimy = self.framebuffer.get_dimensions()
         self.r = r
         self.g = g
         self.b = b
+        self.laststep = current_milli_time()
 
     def process(self, startpoints):
         rads = math.radians(self.direction)
-        self.pos[0] += math.cos(rads) * self.movement_step
-        self.pos[1] += math.sin(rads) * self.movement_step
+        movement = (current_milli_time() - self.laststep) * self.movement_step
+        self.pos[0] += math.cos(rads) * movement
+        self.pos[1] += math.sin(rads) * movement
         self.draw_dot()
         if self.pos[0] > self.dimx * 1000 or self.pos[0] < 0:  # distinction for first axis
             self.direction = (180 - self.direction) % 360
         if self.pos[1] > self.dimy * 1000 or self.pos[1] < 0:  # distinction for second axis
             self.direction = (-self.direction) % 360
+        self.laststep = current_milli_time()
 
         for point in startpoints:
             if point.pixel[0] == int(self.pos[0]/1000) and point.pixel[1] == int(self.pos[1]/1000):
