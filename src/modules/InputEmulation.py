@@ -64,15 +64,21 @@ class InputEmulation(InputDevice):
                     self.new_input(pos[0], pos[1], 0)
                     self.inputs[0].press()
                 else:
-                    if self.mouse_up is False or self.last_pos[0] != pos[0] or self.last_pos[1] != pos[1]:
-                        if 0 in self.inputs:
-                            self.inputs[0].release()
-                            self.last_pos = pos
-                            self.mouse_up = True
-                        else:
+                    if self.mouse_up is False:
+                        if self.last_pos[0] != pos[0] or self.last_pos[1] != pos[1]:
+                            if 0 in self.inputs:
+                                self.inputs[0].release()
+                                self.last_pos = pos
+                                self.mouse_up = True
+                            else:
+                                self.new_input(pos[0], pos[1], 0)
+                                self.inputs[0].press()
+                                self.mouse_up = False
+                    elif self.mouse_up:
+                        if self.last_pos[0] != pos[0] or self.last_pos[1] != pos[1]:
+                            self.mouse_up = False
                             self.new_input(pos[0], pos[1], 0)
                             self.inputs[0].press()
-                            self.mouse_up = False
                 self.last_pos = pos
 
         if event == 'graph':
@@ -80,6 +86,7 @@ class InputEmulation(InputDevice):
                 if self.last_pos is None or (self.last_pos[0] != pos[0] or self.last_pos[1] != pos[1]):
                     if 0 not in self.inputs:
                         self.new_input(pos[0], pos[1], 0)
+                        self.inputs[0].press()
                     if self.last_pos is not None:
                         print((self.last_pos[0] != pos[0] or self.last_pos[1] != pos[1]))
                     self.inputs[0].move(self.u(pos[0]), self.v(pos[1]))

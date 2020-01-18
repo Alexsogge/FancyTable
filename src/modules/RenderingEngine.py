@@ -1,7 +1,8 @@
 from random import randint
 from typing import List, Dict, Tuple, Union
 import math
-
+from PIL import Image, ImageDraw, ImageFont
+import numpy as np
 
 from .Helpers import *
 from .OutputDevice import OutputDevice
@@ -233,6 +234,22 @@ class RenderingEngine:
 #             if d > 0:
 #                 d = d - 2 * x + 2
 #                 x = x - 1
+
+    def draw_text(self, x_0: int, y_0: int, text: str, color: Color = Colors.WHITE,  width: int = math.inf, offset: int = 0, size: int = 8):
+        myfont = ImageFont.truetype("./small_pixel.ttf", size)
+        size = myfont.getsize(text)
+        img = Image.new("1", size, "black")
+        draw = ImageDraw.Draw(img)
+        draw.text((0, 0), text, "white", font=myfont)
+        pixels = np.array(img, dtype=np.uint8)
+        chars = np.array([' ', '#'], dtype="U1")[pixels]
+        strings = chars.view('U' + str(chars.shape[1])).flatten()
+        #print("\n".join(strings))
+        for y, row in enumerate(pixels):
+            for x, pixel in enumerate(row):
+                if pixel == 1 and x > offset-1 and (x - offset - 1) < width:
+                    self.draw_pixel(x_0 + x - offset, y_0 + y, color)
+        #print(pixels)
 
     def draw_row(self, row: int, color: Color):
         self.draw_line(0, row, self.frame_buffer.width, row)

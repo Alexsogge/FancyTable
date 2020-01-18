@@ -1,3 +1,5 @@
 adafruit-circuitpython-neopixel
 graphics
 PySimpleGUI
+Pillow
+numpy

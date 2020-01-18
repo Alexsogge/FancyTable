@@ -82,7 +82,7 @@ class Color:
 
     @property
     def rgb_string(self) -> str:
-        return "#{:02X}{:02X}{:02X}".format(self.r, self.g, self.b)
+        return "#{:02X}{:02X}{:02X}".format(int(self.r), int(self.g), int(self.b))
 
 
 class Colors:
