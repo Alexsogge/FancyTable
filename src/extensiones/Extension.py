@@ -1,12 +1,17 @@
 from abc import ABC, abstractmethod
 from modules import Framebuffer
-from modules import ExtensionManager
 
+
+from modules.RenderingEngine import RenderingEngine
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from modules.ExtensionManager import ExtensionManager
 
 
 class Extension(ABC):
-    frame_buffer = None
-    extension_manager = None
+    render_engine: RenderingEngine = None
+    extension_manager: 'ExtensionManager' = None
 
     def __init__(self):
         """
@@ -17,42 +22,23 @@ class Extension(ABC):
         self.icon_width = 10
         self.icon_height = 10
         self.icon_pic = self.read_icon("../icons/nonpic.ppm")
+        print(self.icon_pic)
 
-    @staticmethod
-    def set_global_frame_buffer(buffer: Framebuffer.Frame):
+    @classmethod
+    def set_global_render_engine(cls, render_engine: RenderingEngine):
         """
         Sets the frame buffer for all extensions
-        :param buffer:
+        :param render_engine:
         """
-        global frame_buffer
-        frame_buffer = buffer
+        cls.render_engine = render_engine
 
-    @staticmethod
-    def set_global_extension_manager(mgr: ExtensionManager):
+    @classmethod
+    def set_global_extension_manager(cls, mgr: 'ExtensionManager'):
         """
         Sets the frame buffer for all extensions
         :param mgr:
         """
-        global extension_manager
-        extension_manager = mgr
-
-    @property
-    def framebuffer(self) -> Framebuffer.Frame:
-        """
-        returns the global frame buffer
-        :rtype: Framebuffer
-        """
-        global frame_buffer
-        return frame_buffer
-
-    @property
-    def extensionmanager(self) -> ExtensionManager:
-        """
-        returns the global frame buffer
-        :rtype: Framebuffer
-        """
-        global extension_manager
-        return extension_manager
+        cls.extension_manager = mgr
 
     def get_icon(self):
         """
@@ -75,7 +61,7 @@ class Extension(ABC):
         self.icon_height = height
 
     def clicked_on_icon(self, x, y):
-        print(self.icon_x, "<=", x, "<=", self.icon_x + self.icon_width, "and", self.icon_y, "<", y, "<", self.icon_y + self.icon_height)
+        # print(self.icon_x, "<=", x, "<=", self.icon_x + self.icon_width, "and", self.icon_y, "<", y, "<", self.icon_y + self.icon_height)
         return self.icon_x <= x <= self.icon_x + self.icon_width and \
                 self.icon_y < y < self.icon_y + self.icon_height
 
@@ -84,11 +70,11 @@ class Extension(ABC):
         pass
 
     @abstractmethod
-    def process_input(self, slot, action):
+    def process_input(self, action):
         pass
 
     @abstractmethod
-    def loop(self):
+    def loop(self, time_delta: float):
         pass
 
     def read_icon(self, filename):

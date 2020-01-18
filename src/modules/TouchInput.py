@@ -1,33 +1,11 @@
-import mtdev
+from .InputDevice import *
+#import mtdev
 import sys
 from enum import Enum
 from queue import Queue
 from .Framebuffer import Frame
 import time
 
-
-class ActionType(Enum):
-    PRESSED = 1
-    RELEASED = 2
-    MOVED = 3
-
-
-class Action:
-
-    def __init__(self, x, y, atype):
-        self.x = x
-        self.y = y
-        self.type = atype
-        self.pixels = (x, y)
-
-    def __str__(self):
-        return "Action " + str(self.type) + " on " + str(self.x) + " | "+ str(self.y) + " -> "+ str(self.pixels)
-
-    def add_pixels(self, pixels):
-        """
-        :rtype: (x, y)
-        """
-        self.pixels = pixels
 
 
 class Display:

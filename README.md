@@ -9,7 +9,7 @@ We use an IKEA LACK table because it only consists of cardboard inside. After cu
 The lighting consists of smart WS2812B 5050 RGB LEDs. These LEDs can be addressed individually. We arrange the LEDs as grid and seperate them from each other. On top will be placed a frosted glas plate or satined plexiglass, to diffuse the light and create some kind of pixel pattern.
 
 ## Smart functionality
-We will use an Raspberry Pi to controll the LEDs. A simple microcontrolle would be  sufficient but we want additionally host an multitouch input device and a webpage for controlling.
+We will use an Raspberry Pi to controll the LEDs. A simple microcontrolle would be  sufficient but we want additionally host a multitouch input device and a webpage for controlling.
 
 #How To
 Now I will guide you through the process to build your own FancyTable.

@@ -1,5 +1,5 @@
 from .Extension import Extension
-from modules.TouchInput import ActionType
+from modules.Helpers import *
 import time
 import random
 import colorsys
@@ -8,25 +8,24 @@ current_milli_time = lambda: int(round(time.time() * 1000))
 
 class RainbowExtension(Extension):
 
-    switch_speed = 10
-    switch_step = 1
-    last_frame = 0
-
-    color_lengh = 5000
-    color_step = 0
-
     def __init__(self):
         super().__init__()
+        self.switch_speed = 10
+        self.switch_step = 1
+        self.last_frame = 0
+
+        self.color_lengh = 5000
+        self.color_step = 0
         self.icon_pic = self.read_icon("../icons/rainbow.ppm")
 
     def set_active(self):
         self.last_frame = current_milli_time()
         self.color_step = 0
 
-    def process_input(self, slot, action):
+    def process_input(self, action):
         pass
 
-    def loop(self):
+    def loop(self, time_delta):
         if current_milli_time() > self.last_frame + self.switch_speed:
             # r, g, b = colorsys.hsv_to_rgb(self.color_step / self.color_lengh, 1, 1)
             # R, G, B = int(255 * r), int(255 * g), int(255 * b)
@@ -37,14 +36,9 @@ class RainbowExtension(Extension):
             #    column.append({'r': R, 'g': G, 'b': B})
             # self.framebuffer.set_matrix_column(0, column)
             # print(self.color_step)
-            for i in range(self.framebuffer.get_dimensions()[0]):
-                r, g, b = colorsys.hsv_to_rgb(((self.color_step + i * 100) % self.color_lengh) / self.color_lengh, 1, 1)
-                R, G, B = int(255 * r), int(255 * g), int(255 * b)
-                column = []
-                for j in range(self.framebuffer.get_dimensions()[1]):
-                  column.append({'r': R, 'g': G, 'b': B})
-                # print(i, "->", column)
-                self.framebuffer.set_matrix_column(i, column)
+            for i in range(self.render_engine.frame_buffer.get_dimensions()[0]):
+                color = Colors.generate_from_pallete(self.color_step + i * 100)
+                self.render_engine.draw_column(i, color)
 
             self.last_frame = current_milli_time()
             self.color_step = (self.color_step + self.switch_speed)

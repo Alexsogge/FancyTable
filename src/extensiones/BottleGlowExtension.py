@@ -1,11 +1,13 @@
 from .Extension import Extension
-from modules.TouchInput import ActionType
+from modules.Helpers import *
+from modules.RenderingEngine import RenderingEngine
 import time
 import random
 import colorsys
 import math
 
 current_milli_time = lambda: int(round(time.time() * 1000))
+
 
 class BottleGlowExtension(Extension):
 
@@ -19,7 +21,7 @@ class BottleGlowExtension(Extension):
     def __init__(self):
         super().__init__()
         self.icon_pic = self.read_icon("../icons/bottleglow.ppm")
-        self.dimx, self.dimy = self.framebuffer.get_dimensions()
+        self.dimx, self.dimy = self.render_engine.get_dimensions()
         self.points = {}
 
     def set_active(self):
@@ -29,19 +31,17 @@ class BottleGlowExtension(Extension):
         self.dots = []
         #self.framebuffer.set_tales(True, 2)
 
-    def process_input(self, slot, action):
+    def process_input(self, action):
         if action.type == ActionType.PRESSED:
-            r, g, b = colorsys.hsv_to_rgb(random.random(), 1, 1)
-            R, G, B = int(255 * r), int(255 * g), int(255 * b)
-            self.points[slot] = Dot(action.pixels[0], action.pixels[1], [R, G, B], self.framebuffer)
-        if slot in self.points and action.type == ActionType.MOVED:
-            self.points[slot].update_pos(action.pixels[0], action.pixels[1])
-        if slot in self.points and action.type == ActionType.RELEASED:
-            del self.points[slot]
+            self.points[action.z] = Dot(action.pixels[0], action.pixels[1], Colors.generate_random(), self.render_engine)
+        if action.z in self.points and action.type == ActionType.MOVED:
+            self.points[action.z].update_pos(action.pixels[0], action.pixels[1])
+        if action.z in self.points and action.type == ActionType.RELEASED:
+            del self.points[action.z]
 
-    def loop(self):
+    def loop(self, time_delta: float):
         if current_milli_time() > self.last_frame + self.movement_speed:
-            self.framebuffer.clear_frame()
+            self.render_engine.clear_buffer()
             for key, point in self.points.items():
                 point.expand()
                 point.draw_drop()
@@ -52,14 +52,14 @@ class BottleGlowExtension(Extension):
 
 class Dot:
 
-    def __init__(self, x, y, color, framebuffer):
+    def __init__(self, x, y, color: Color, render_engine: RenderingEngine):
         self.x = x
         self.y = y
         self.radius = 1
         self.expansion_speed = 0.0000005
-        self.color = color
+        self.color: Color = color
         self.initiated = current_milli_time()
-        self.framebuffer = framebuffer
+        self.render_engine: RenderingEngine = render_engine
         self.direction = 1
         self.intense = 1
 
@@ -75,15 +75,6 @@ class Dot:
             self.direction = 1
         self.initiated = current_milli_time()
 
-    def symetry_dots(self, x, y):
-        self.framebuffer.set_pixel_col(x + self.x, y + self.y, [i / self.intense for i in self.color])
-        self.framebuffer.set_pixel_col(-x + self.x, y + self.y, [i / self.intense for i in self.color])
-        self.framebuffer.set_pixel_col(x + self.x, -y + self.y, [i / self.intense for i in self.color])
-        self.framebuffer.set_pixel_col(-x + self.x, -y + self.y, [i / self.intense for i in self.color])
-        self.framebuffer.set_pixel_col(y + self.x, x + self.y, [i / self.intense for i in self.color])
-        self.framebuffer.set_pixel_col(-y + self.x, x + self.y, [i / self.intense for i in self.color])
-        self.framebuffer.set_pixel_col(y + self.x, -x + self.y, [i / self.intense for i in self.color])
-        self.framebuffer.set_pixel_col(-y + self.x, -x + self.y, [i / self.intense for i in self.color])
 
     def draw_drop(self):
         """
@@ -100,17 +91,8 @@ class Dot:
         :param frame_buffer:
         :return:
         """
-        self.framebuffer.set_pixel_col(self.x, self.y, [i / self.intense for i in self.color])
-        d = -self.radius
-        x = self.radius
-        y = 0
-        while y <= x:
-            self.symetry_dots(x, y)
-            d = d + 2 * y + 1
-            y = y + 1
-            if d > 0:
-                d = d - 2 * x + 2
-                x = x - 1
+        self.render_engine.draw_circle(self.x, self.y, self.color)
+
 
     def update_pos(self, x, y):
         self.x = x
