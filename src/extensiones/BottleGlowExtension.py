@@ -91,7 +91,7 @@ class Dot:
         :param frame_buffer:
         :return:
         """
-        self.render_engine.draw_circle(self.x, self.y, self.color)
+        self.render_engine.draw_circle(self.x, self.y, self.radius, self.color)
 
 
     def update_pos(self, x, y):

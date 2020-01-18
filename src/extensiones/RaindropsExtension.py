@@ -40,7 +40,7 @@ class Raindrop:
         :param frame_buffer:
         :return:
         """
-        render_engine.draw_circle(x, y, self.radius, self.color)
+        render_engine.draw_circle(self.x, self.y, self.radius, self.color)
 
 
 

@@ -237,7 +237,7 @@ class Action:
         self.pixels = (x, y)
 
     def __str__(self):
-        return "Action " + str(self.type) + " on " + str(self.x) + " | "+ str(self.y) + " -> "+ str(self.pixels)
+        return "[{}]Action {} on {}|{} -> {}".format(self.z, self.type, self.x, self.y, self.pixels)
 
     def add_pixels(self, pixels: List[int]):
         """

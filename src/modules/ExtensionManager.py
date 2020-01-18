@@ -25,13 +25,13 @@ class MenueSwitch:
         if action.type == ActionType.PRESSED:
             if action.pixels[1] < 2:
                 if self.startpoint is None:
-                    print("Create Start", action.z, "on", action.pixels[0])
+                    # print("Create Start", action.z, "on", action.pixels[0])
                     self.startpoint = {action.z: action.pixels[0]}
                     return
                 if action.z not in self.startpoint:
                     for key, val in self.startpoint.items():
                         if abs(val - action.pixels[0]) < 3:
-                            print("Add Start", action.z, "on", action.pixels[0])
+                            # print("Add Start", action.z, "on", action.pixels[0])
                             self.startpoint[action.z] = action.pixels[0]
                             return
             elif self.startpoint is not None and action.z in self.startpoint:
@@ -84,10 +84,10 @@ class Menue:
 
     def process_input(self, input: Action):
         if input.type == ActionType.PRESSED:
-            #print("Menuetest: ", input.pixels)
-            if input.pixels[1] >= self.render_engine.frame_buffer.width-1:
+            print("Menuetest: ", input.pixels[1] , "vs", self.render_engine.frame_buffer.height-1)
+            if input.pixels[1] >= self.render_engine.frame_buffer.height-1:
                 print("Bottom line")
-                if input.pixels[0] < self.render_engine.frame_buffer.height/2:
+                if input.pixels[0] < self.render_engine.frame_buffer.width/2:
                     self.extension_side = (self.extension_side - 1) % math.ceil(len(self.extensions) / 2)
                 else:
                     self.extension_side = (self.extension_side + 1) % math.ceil(len(self.extensions) / 2)

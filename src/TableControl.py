@@ -61,11 +61,13 @@ if __name__ == "__main__":
         for input in input_device.get_inputs().values():
             x, y = render_engine.map_input(input.x, input.y)
             for action in input.actions:
-                # render_engine.draw_pixel(action.pixels[0], action.pixels[1], Colors.YELLOW)
+                #render_engine.draw_pixel(action.pixels[0], action.pixels[1], Colors.YELLOW)
                 extension_manager.process_input(action)
+                print(action)
                 if action.type == ActionType.RELEASED:
                     input_device.clear_inputs()
                     break
+            input.clear()
 
         extension_manager.loop(0)
 

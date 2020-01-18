@@ -209,7 +209,9 @@ class RenderingEngine:
 
 
         theta = 0
-        step = math.radians(30/r)
+        if r == 0:
+            r = 0.001
+        step = math.radians(15/r)
 
         while theta <= math.radians(360) + step:
             x = x_0 + r * math.cos(theta)
