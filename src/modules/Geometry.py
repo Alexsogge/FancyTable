@@ -111,6 +111,10 @@ class Vector:
     def __le__(self, other) -> bool:
         return self < other or self == other
 
+    def set(self, other: 'Vector'):
+        self.x = other.x
+        self.y = other.y
+
 
     def dot(self, other: 'Vector') -> float:
         return self.x * other.x + self.y * other.y

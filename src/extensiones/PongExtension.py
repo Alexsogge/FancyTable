@@ -6,11 +6,6 @@ from modules.Geometry import *
 import math
 import random
 
-tetromino_types = (((0, 0), (1, 0), (-1, 0), (2, 0)), ((0, 0), (0, -1), (1, 0), (1, 1)),
-                   ((0, 0), (-1, 0), (0, 1), (0, -1)), ((0, 0), (-1, 0), (0, 1), (-1, 1)),
-                   ((0, 0), (0, 1), (1, 0), (1, -1)), ((0, 0), (0, 1), (0, 2), (-1, 2)),
-                   ((0, 0), (0, 1), (0, 2), (-1, 0)))
-tetromino_colors = (Colors.GREEN, Colors.CYAN, Colors.RED, Colors.YELLOW, Colors.ORANGE, Colors.BLUE, Colors.PURPLE)
 
 class Paddle:
 
@@ -76,8 +71,6 @@ class Ball:
         self.walls.append(Wall(1, render_engine))
         self.walls.append(Wall(3, render_engine))
 
-
-
     def loop(self, time_delta):
         self.pos += self.movement * time_delta * self.speed
         self.check_bounce(time_delta)
@@ -113,9 +106,15 @@ class PongExtension(Extension):
         self.game_end = True
         self.player_ready = [False, False]
         self.player_released = [0, 0]
+        self.icon_pic = self.read_icon("../icons/pong.ppm")
 
     def set_active(self):
         self.ball = Ball(self.render_engine)
+        self.game_end = True
+        self.player_ready = [False, False]
+        self.player_released = [0, 0]
+        self.scores = [0, 0]
+        self.render_engine.set_tales(True, 100)
 
     def process_input(self, action):
         if action.pixels[0] < self.render_engine.width / 2 - 1:
@@ -151,6 +150,7 @@ class PongExtension(Extension):
             for paddle in self.paddles:
                 if paddle.check_collision(self.ball.pos):
                     self.ball.movement.reflect_to(paddle.normal)
+                    self.ball.speed += 0.5
 
 
         self.ball.draw()
@@ -164,6 +164,7 @@ class PongExtension(Extension):
         self.game_end = False
         self.ball.pos.x = int(self.render_engine.width / 2)
         self.ball.pos.y = int(self.render_engine.height / 2 - 1)
+        self.ball.speed = 12
 
     def end_round(self):
         self.game_end = True

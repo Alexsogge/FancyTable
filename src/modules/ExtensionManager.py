@@ -122,7 +122,7 @@ class Menue:
             for y, row in enumerate(icon):
                 for x, pix in enumerate(row):
                     self.render_engine.draw_pixel(x + (number - self.extension_side * num_icons_per_frame) * (icon_width + 1),
-                                                  y + 1, Color(pix[1], pix[0], pix[2]))
+                                                  y + 1, Color(pix[0], pix[1], pix[2]))
 
 
 

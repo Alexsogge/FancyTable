@@ -39,11 +39,20 @@ class Tetromino:
         n = round(math.sin(rad) * x + math.cos(rad) * y)
         return k, n
 
-    def rotate_tetromino(self):
-        rad = math.radians(90)
+    def rotate_pieces(self, rad):
         for i in range(len(self.pieces)):
             piece = self.pieces[i]
             self.pieces[i] = self.rotate(piece[0], piece[1])
+
+    def rotate_tetromino(self, other_tetrominos: List['Tetromino']):
+        rad = math.radians(90)
+        self.rotate_pieces(rad)
+        for other_tetromino in other_tetrominos:
+            if other_tetromino.check_colission(self):
+                rad = math.radians(-90)
+                #self.rotate_pieces(rad)
+                return
+
         while True:
             moved = False
             for piece in self.pieces:
@@ -104,6 +113,7 @@ class TetrisExtension(Extension):
         self.ui_right_color: Color = Color(120, 255, 0, 0.2)
         self.ui_drop_color: Color = Color(0, 120, 255, 0.2)
         self.score = 0
+        self.icon_pic = self.read_icon("../icons/tetris.ppm")
 
 
     def set_active(self):
@@ -115,11 +125,15 @@ class TetrisExtension(Extension):
     def process_input(self, action):
         if action.type == ActionType.PRESSED:
             if action.pixels[0] < self.render_engine.width - 3:
-                self.tetrominos[-1].rotate_tetromino()
+                self.tetrominos[-1].rotate_tetromino(self.tetrominos)
             elif action.pixels[1] < 4:
                 self.tetrominos[-1].move_right()
+                if self.check_colission(self.tetrominos[-1]):
+                    self.tetrominos[-1].move_left()
             elif action.pixels[1] >= 8:
                 self.tetrominos[-1].move_left()
+                if self.check_colission(self.tetrominos[-1]):
+                    self.tetrominos[-1].move_right()
             else:
                 while not self.check_colission(self.tetrominos[-1]):
                     self.tetrominos[-1].x_0 += 0.2
@@ -155,7 +169,7 @@ class TetrisExtension(Extension):
             self.game_over_text.loop(time_delta)
             self.game_over_text.display()
 
-    def check_colission(self, tetromino: Tetromino):
+    def check_colission(self, chack_tetromino: Tetromino):
         for tetromino in self.tetrominos:
             if self.tetrominos[-1].check_colission(tetromino):
                 return True

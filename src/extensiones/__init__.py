@@ -10,3 +10,4 @@ from .ScreenSaverExtension import ScreenSaverExtension
 from .BottleGlowExtension import BottleGlowExtension
 from .TetrisExtension import TetrisExtension
 from .PongExtension import PongExtension
+from .SnakeExtension import SnakeExtension
