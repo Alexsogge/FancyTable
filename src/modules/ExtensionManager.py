@@ -23,14 +23,14 @@ class MenueSwitch:
 
     def add_input(self, action: Action):
         if action.type == ActionType.PRESSED:
-            if action.pixels[1] < 2:
+            if action.pixels[1] <= 2:
                 if self.startpoint is None:
                     # print("Create Start", action.z, "on", action.pixels[0])
                     self.startpoint = {action.z: action.pixels[0]}
                     return
                 if action.z not in self.startpoint:
                     for key, val in self.startpoint.items():
-                        if abs(val - action.pixels[0]) < 3:
+                        if abs(val - action.pixels[0]) <= 3:
                             # print("Add Start", action.z, "on", action.pixels[0])
                             self.startpoint[action.z] = action.pixels[0]
                             return
@@ -39,7 +39,7 @@ class MenueSwitch:
         if self.startpoint is None:
             return False
         if action.type == ActionType.RELEASED:
-            if action.pixels[1] > self.framebuffer.get_dimensions()[1]-3:
+            if action.pixels[1] >= self.framebuffer.get_dimensions()[1]-3:
                 if action.z not in self.startpoint:
                     return
                 if self.endpoint is None:

@@ -8,3 +8,4 @@ GameOfLifeExtension
 ScreenSaverExtension
 BottleGlowExtension
 TetrisExtension
+PongExtension
