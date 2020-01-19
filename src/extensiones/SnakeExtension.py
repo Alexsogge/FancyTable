@@ -32,6 +32,7 @@ class NewElement:
 class SnakeExtension(Extension):
 
     def __init__(self):
+        self.default_config = {'border': False}
         super().__init__()
         self.icon_pic = self.read_icon("../icons/snake.ppm")
 
@@ -41,11 +42,10 @@ class SnakeExtension(Extension):
             color.a = 0.15
 
         self.snake_elements: List[SnakeElement] = []
-
         self.speed = 3
         self.step = 0
         self.direction: Vector = Vector(1, 0)
-        self.border = True
+        self.border = self.config['border'] == 'True'
         self.new_element: NewElement = NewElement(self.render_engine)
         self.gameover = False
         self.gameover_text: Union[None, ScrollingText] = None

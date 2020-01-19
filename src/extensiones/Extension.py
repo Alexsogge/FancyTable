@@ -3,6 +3,7 @@ from modules import Framebuffer
 
 
 from modules.RenderingEngine import RenderingEngine
+from modules.ConfigAdapter import ConfigAdapter
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -12,6 +13,7 @@ if TYPE_CHECKING:
 class Extension(ABC):
     render_engine: RenderingEngine = None
     extension_manager: 'ExtensionManager' = None
+    default_config = dict()
 
     def __init__(self):
         """
@@ -22,7 +24,8 @@ class Extension(ABC):
         self.icon_width = 10
         self.icon_height = 10
         self.icon_pic = self.read_icon("../icons/nonpic.ppm")
-        print(self.icon_pic)
+        self.config_adapter: ConfigAdapter = ConfigAdapter(self._type(), self.default_config)
+        self.config = self.config_adapter.read_saved_values()
 
     @classmethod
     def set_global_render_engine(cls, render_engine: RenderingEngine):
@@ -76,6 +79,13 @@ class Extension(ABC):
     @abstractmethod
     def loop(self, time_delta: float):
         pass
+
+    def _type(self):
+        return self.__class__.__name__
+
+    def write_default_config(self):
+        for key, value in self.default_config.items():
+            self.config_adapter.set_value(key, value)
 
     def read_icon(self, filename):
         """
