@@ -15,7 +15,7 @@ class Tetromino:
 
     def __init__(self, tetr_type, falling_speed, render_engine: RenderingEngine):
         self.x_0 = 0
-        self.y_0 = 5
+        self.y_0 = 7
         self.render_engine = render_engine
         self.falling_speed = falling_speed
         self.pieces: List[List[int]] = list()
@@ -56,7 +56,7 @@ class Tetromino:
         while True:
             moved = False
             for piece in self.pieces:
-                if self.y_0 + piece[1] < 0:
+                if self.y_0 + piece[1] < 2:
                     moved = True
                     self.move_left()
             for piece in self.pieces:
@@ -68,7 +68,7 @@ class Tetromino:
 
     def move_right(self):
         for piece in self.pieces:
-            if self.y_0 + piece[1] < 1:
+            if self.y_0 + piece[1] < 3:
                 return
         self.y_0 -= 1
 
@@ -112,6 +112,8 @@ class TetrisExtension(Extension):
         self.ui_left_color: Color = Color(255, 0, 120, 0.2)
         self.ui_right_color: Color = Color(120, 255, 0, 0.2)
         self.ui_drop_color: Color = Color(0, 120, 255, 0.2)
+        self.ui_border_color: Color = Colors.generate_color(Colors.WHITE)
+        self.ui_border_color.a = 0.2
         self.score = 0
         self.icon_pic = self.read_icon("../icons/tetris.ppm")
 
@@ -164,6 +166,8 @@ class TetrisExtension(Extension):
                                           self.ui_drop_color)
         self.render_engine.draw_rectangle(self.render_engine.width - 3, 8, self.render_engine.width, 11,
                                           self.ui_left_color)
+        self.render_engine.draw_rectangle(0, 0, self.render_engine.width, 1,
+                                          self.ui_border_color)
 
         if self.game_over:
             self.game_over_text.loop(time_delta)
@@ -183,7 +187,7 @@ class TetrisExtension(Extension):
                     if piece[0] + int(tetromino.x_0) == column:
                         cells += 1
             print(cells)
-            if cells == self.render_engine.height:
+            if cells == self.render_engine.height-2:
                 for tetromino in self.tetrominos[:]:
                     removed_piece = False
                     for piece in tetromino.pieces[:]:
