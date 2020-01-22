@@ -6,6 +6,7 @@ from modules.ExtensionManager import ExtensionManager
 from modules.GuiElements import *
 from extensiones import *
 from modules.Helpers import *
+from modules.WebServerConnection import WebServerConnection
 import sys
 import time
 
@@ -72,6 +73,11 @@ if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: python3 TableControl.py <device path>")
         sys.exit(1)
+
+
+    web_server_connection = WebServerConnection()
+    web_server_connection.start()
+    print("Start application")
 
     control = TableControl()
 

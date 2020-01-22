@@ -3,3 +3,4 @@ graphics
 PySimpleGUI
 Pillow
 numpy
+websocket-client

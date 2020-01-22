@@ -109,7 +109,8 @@ class SnakeExtension(Extension):
         head_pos = self.snake_elements[0].pos
         if head_pos.x < 0 or head_pos.x >= self.render_engine.width or head_pos.y < 0 or \
                 head_pos.y >= self.render_engine.height:
-            self.game_over()
+            if not self.gameover:
+                self.game_over()
 
         self.draw()
         if self.gameover:
@@ -118,6 +119,7 @@ class SnakeExtension(Extension):
 
     def game_over(self):
         self.gameover = True
+
         self.gameover_text = ScrollingText(self.render_engine, 2, 2, self.render_engine.width - 4,
                                            "Game over: " + str(len(self.snake_elements)))
 

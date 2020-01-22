@@ -38,6 +38,5 @@ class ScrollingText(GuiElement):
             self.movement = 0
             self.position = (self.position + 1) % (len(self.text) * 4)
 
-
     def display(self):
         self.render_engine.draw_text(self.x_0, self.y_0, self.text, self.color, self.width, self.position)
