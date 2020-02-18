@@ -1,7 +1,7 @@
 from .Extension import Extension
 from modules.Helpers import *
 from modules.RenderingEngine import RenderingEngine
-from modules.GuiElements import ScrollingText
+from modules.GuiElements import ScrollingText, InputText
 import math
 
 tetromino_types = (((0, 0), (1, 0), (-1, 0), (2, 0)), ((0, 0), (0, -1), (1, 0), (1, 1)),
@@ -116,6 +116,7 @@ class TetrisExtension(Extension):
         self.ui_border_color.a = 0.2
         self.score = 0
         self.icon_pic = self.read_icon("../icons/tetris.ppm")
+        self.highscore_name_field: Union[None, InputText] = None
 
 
     def set_active(self):
@@ -123,8 +124,11 @@ class TetrisExtension(Extension):
         self.tetrominos.append(Tetromino(random.randint(0, 6), self.falling_speed, self.render_engine))
         self.game_over = False
         self.game_over_text: ScrollingText = None
+        self.highscore_name_field = None
 
     def process_input(self, action):
+        if self.highscore_name_field is not None:
+            self.highscore_name_field.input(action)
         if action.type == ActionType.PRESSED:
             if action.pixels[0] < self.render_engine.width - 3:
                 self.tetrominos[-1].rotate_tetromino(self.tetrominos)
@@ -151,11 +155,7 @@ class TetrisExtension(Extension):
                     self.tetrominos.append(Tetromino(random.randint(0, 6), self.falling_speed, self.render_engine))
                     print("check for game over")
                     if self.check_colission(self.tetrominos[-1]):
-                        self.game_over = True
-                        for tetromino in self.tetrominos:
-                            tetromino.color.a = 0.3
-                        print("game over")
-                        self.game_over_text = ScrollingText(self.render_engine, 2, 2, 17, "Game over: {}".format(self.score), 0.15)
+                        self.game_ended()
                         break
         for tetromino in self.tetrominos:
             tetromino.draw()
@@ -171,7 +171,9 @@ class TetrisExtension(Extension):
 
         if self.game_over:
             self.game_over_text.loop(time_delta)
-            self.game_over_text.display()
+            #self.game_over_text.display()
+            self.highscore_name_field.loop(time_delta)
+            self.highscore_name_field.display()
 
     def check_colission(self, chack_tetromino: Tetromino):
         for tetromino in self.tetrominos:
@@ -179,7 +181,7 @@ class TetrisExtension(Extension):
                 return True
         return False
 
-    def check_line_complete(self, combo=0):
+    def check_line_complete(self, combo=1):
         for column in range(self.render_engine.width + 1):
             cells = 0
             for tetromino in self.tetrominos:
@@ -200,3 +202,14 @@ class TetrisExtension(Extension):
                         tetromino.x_0 += 1
                 return self.check_line_complete(combo*2)
         return combo
+
+
+    def game_ended(self):
+        self.game_over = True
+        for tetromino in self.tetrominos:
+            tetromino.color.a = 0.3
+        print("game over")
+        self.highscore_name_field = InputText(self.render_engine, 2, 2, 3)
+        self.game_over_text = ScrollingText(self.render_engine, 2, 2, 17, "Game over: {}".format(self.score), 0.15)
+        if self.websocket_connection is not None:
+            self.websocket_connection.save_data(self, 'highscore', {'score': self.score})

@@ -45,7 +45,6 @@ class SnakeExtension(Extension):
         self.speed = 3
         self.step = 0
         self.direction: Vector = Vector(1, 0)
-        self.border = self.config['border'] == 'True'
         self.new_element: NewElement = NewElement(self.render_engine)
         self.gameover = False
         self.gameover_text: Union[None, ScrollingText] = None
@@ -62,7 +61,9 @@ class SnakeExtension(Extension):
         self.gameover = False
 
     def process_input(self, action):
-        if self.moved_tile:
+        if self.gameover:
+            self.set_active()
+        elif self.moved_tile:
             if action.x < 0.25:
                 if self.direction.x == 0:
                     self.direction = Vector(-1, 0)
@@ -92,13 +93,12 @@ class SnakeExtension(Extension):
                 for i in range(len(self.snake_elements) - 1, 0, -1):
                     self.snake_elements[i].pos = self.snake_elements[i - 1].pos
                 self.snake_elements[0].pos += self.direction
-                if self.border == False:
+                if not self.config['border']:
                     self.snake_elements[0].pos.x %= self.render_engine.width
                     self.snake_elements[0].pos.y %= self.render_engine.height
 
             # print(self.snake_elements[-1].pos, " == ", self.new_element.pos)
             if self.snake_elements[-1].pos == self.new_element.pos:
-                print("match")
                 self.snake_elements.append(
                     SnakeElement(self.new_element.pos.x, self.new_element.pos.y, self.render_engine))
                 self.new_element = NewElement(self.render_engine)
@@ -114,12 +114,13 @@ class SnakeExtension(Extension):
 
         self.draw()
         if self.gameover:
+            self.render_engine.draw_rectangle(0, 0, self.render_engine.width, self.render_engine.height,
+                                              Color(0, 0, 0, 0.6))
             self.gameover_text.loop(time_delta)
             self.gameover_text.display()
 
     def game_over(self):
         self.gameover = True
-
         self.gameover_text = ScrollingText(self.render_engine, 2, 2, self.render_engine.width - 4,
                                            "Game over: " + str(len(self.snake_elements)))
 

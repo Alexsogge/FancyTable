@@ -4,15 +4,18 @@ from modules import Framebuffer
 
 from modules.RenderingEngine import RenderingEngine
 from modules.ConfigAdapter import ConfigAdapter
+from typing import Dict
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from modules.ExtensionManager import ExtensionManager
+    from modules.WebServerConnection import WebServerConnection
 
 
 class Extension(ABC):
     render_engine: RenderingEngine = None
     extension_manager: 'ExtensionManager' = None
+    websocket_connection: 'WebServerConnection' = None
     default_config = dict()
 
     def __init__(self):
@@ -25,7 +28,7 @@ class Extension(ABC):
         self.icon_height = 10
         self.icon_pic = self.read_icon("../icons/nonpic.ppm")
         self.config_adapter: ConfigAdapter = ConfigAdapter(self._type(), self.default_config)
-        self.config = self.config_adapter.read_saved_values()
+        self.config: Dict = self.config_adapter.config
 
     @classmethod
     def set_global_render_engine(cls, render_engine: RenderingEngine):
@@ -42,6 +45,14 @@ class Extension(ABC):
         :param mgr:
         """
         cls.extension_manager = mgr
+
+    @classmethod
+    def set_global_websocket_connection(cls, wsc: 'WebServerConnection'):
+        """
+        Sets the web_socket_connection for all extensions
+        :param wsc: websocket_connection
+        """
+        cls.websocket_connection = wsc
 
     def get_icon(self):
         """

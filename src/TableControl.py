@@ -22,7 +22,11 @@ class TableControl:
         self.render_engine = RenderingEngine(display[0], display[1], self.output, False)
         self.render_engine.set_tales(True, 50)
         self.input_device = InputEmulation(self.output)
-        self.extension_manager = ExtensionManager(self.render_engine)
+        self.web_server_connection = WebServerConnection()
+        self.extension_manager = ExtensionManager(self.render_engine, self.web_server_connection)
+        self.web_server_connection.initialize(self.extension_manager)
+        self.web_server_connection.start()
+
 
         # self.scroll_text = ScrollingText(self.render_engine, 2, 2, 17, "Langer text", 0.1, Colors.WHITE)
 
@@ -75,8 +79,6 @@ if __name__ == "__main__":
         sys.exit(1)
 
 
-    web_server_connection = WebServerConnection()
-    web_server_connection.start()
     print("Start application")
 
     control = TableControl()

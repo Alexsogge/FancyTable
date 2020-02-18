@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'web.apps.WebConfig',
     'channels',
+    'rest_framework',
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
@@ -121,6 +123,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    'web/static',
+    ]
+
+STATIC_ROOT = 'static'
+
 
 ASGI_APPLICATION = 'WebServer.routing.application'
 CHANNEL_LAYERS = {
@@ -130,4 +138,11 @@ CHANNEL_LAYERS = {
             "hosts": [('127.0.0.1', 6379)],
         },
     },
+}
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+    ]
 }

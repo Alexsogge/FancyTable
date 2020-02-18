@@ -5,6 +5,9 @@ from modules.RenderingEngine import RenderingEngine
 import importlib
 import time
 import math
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from modules.WebServerConnection import WebServerConnection
 
 
 class MenueSwitch:
@@ -133,10 +136,12 @@ class ExtensionManager:
 
 
 
-    def __init__(self, render_engine: RenderingEngine):
+    def __init__(self, render_engine: RenderingEngine, websocket_connection=None):
         self.render_engine: RenderingEngine = render_engine
+        self.websocket_connection = websocket_connection
         Extension.set_global_render_engine(render_engine)
         Extension.set_global_extension_manager(self)
+        Extension.set_global_websocket_connection(self.websocket_connection)
 
         self.current_active_extension: int = 0
         self.extensions: List[Extension] = []
@@ -191,3 +196,17 @@ class ExtensionManager:
     def close_extension(self):
         self.menue_switch = None
         self.menue.set_active()
+
+
+    def open_extension(self, extension_name: str):
+        # @TODO: replace extenlist with dict -> replace following
+        for i, extension in enumerate(self.extensions):
+            print(type(extension).__name__ )
+            if type(extension).__name__ == extension_name:
+                print("Switch to", extension)
+                self.current_active_extension = i
+                self.render_engine.set_tales(False)
+                self.render_engine.clear_buffer()
+                self.menue.is_active = False
+                extension.set_active()
+                break

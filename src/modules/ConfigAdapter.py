@@ -7,12 +7,13 @@ config_file = './config.json'
 
 class ConfigAdapter:
 
+    root = None
+
     def __init__(self, application_name, default_config: Dict):
         self.application_name = application_name
-        print(application_name)
-        self.root = None
 
-        self.open_config_file()
+        if ConfigAdapter.root is None:
+            self.open_config_file()
 
         self.config = None
         self.load_config()
@@ -28,7 +29,7 @@ class ConfigAdapter:
                 json.dump({}, outfile)
 
         with open(config_file) as json_file:
-            self.root = json.load(json_file)
+            ConfigAdapter.root = json.load(json_file)
 
 
     def load_config(self):
