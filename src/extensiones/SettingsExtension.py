@@ -21,13 +21,14 @@ class SettingsExtension(Extension):
             self.last_pointer = (action.x, action.y)
             return
 
-        if action.pixels[0] <= 2 and action.pixels[1] <= 2:
-            self.extension_manager.close_extension()
-        elif abs(self.last_pointer[1] - action.y) > 200:
-            self.render_engine.inc_diming(int((self.last_pointer[1] - action.y) / abs(self.last_pointer[1] - action.y)) * 0.00003)
-            updated = True
-        if updated:
-            self.last_pointer = (action.x, action.y)
+        self.render_engine.set_brightness(action.y)
+        # if action.pixels[0] <= 2 and action.pixels[1] <= 2:
+        #     self.extension_manager.close_extension()
+        # elif abs(self.last_pointer[1] - action.y) > 200:
+        #     self.render_engine.inc_diming(int((self.last_pointer[1] - action.y) / abs(self.last_pointer[1] - action.y)) * 0.00003)
+        #     updated = True
+        # if updated:
+        #     self.last_pointer = (action.x, action.y)
 
     def loop(self, time_delta):
         pass

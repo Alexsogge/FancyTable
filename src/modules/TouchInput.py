@@ -1,11 +1,11 @@
-from .InputDevice import *
-#import mtdev
+from . import mtdev
 import sys
 from enum import Enum
 from queue import Queue
 from .Framebuffer import Frame
 import time
-
+from .InputDevice import *
+from .Helpers import *
 
 
 class Display:
@@ -148,15 +148,13 @@ class TInput:
         return out
 
 
-class TouchInputManager:
-    display = None
-    device = None
-    slot = 0
+class TouchInputManager(InputDevice):
 
-    inputs = {0: TInput(0)}
-
-    def __init__(self, device_path):
+    def __init__(self, device_path, width, height):
+        super().__init__(width, height)
         self.device = mtdev.Device(device_path)
+        self.slot = 0
+        self.display = None
 
     def read_inputs(self, idle=1):
         if self.device.idle(idle):
@@ -172,20 +170,28 @@ class TouchInputManager:
             if data.type == mtdev.MTDEV_TYPE_EV_ABS and data.code == mtdev.MTDEV_CODE_SLOT:
                 self.slot = data.value
                 if self.slot not in self.inputs:
-                    self.inputs[self.slot] = TInput(self.slot)
+                    # self.inputs[self.slot] = TInput(self.slot)
+                    self.new_input(None, None, self.slot)
 
             if data.type == mtdev.MTDEV_TYPE_EV_ABS and data.code == mtdev.MTDEV_CODE_TRACKING_ID:
+                if self.slot not in self.inputs:
+                    self.new_input(None, None, self.slot)
                 if data.value == -1:
                     self.inputs[self.slot].release()
                 else:
                     self.inputs[self.slot].press()
 
             if data.type == mtdev.MTDEV_TYPE_EV_ABS and data.code == mtdev.MTDEV_CODE_POSITION_X:
-                self.inputs[self.slot].move('x', data.value)
+                if self.slot not in self.inputs:
+                    self.new_input(None, None, self.slot)
+                self.inputs[self.slot].move(self.u(data.value))
                 # print("X to ", data.value)
 
             if data.type == mtdev.MTDEV_TYPE_EV_ABS and data.code == mtdev.MTDEV_CODE_POSITION_Y:
-                self.inputs[self.slot].move('y', data.value)
+                if self.slot not in self.inputs:
+                    self.new_input(None, None, self.slot)
+                self.inputs[self.slot].move(None, self.v(data.value))
+            # print([str(ac) for ac in self.inputs[self.slot].actions])
 
 
     def get_inputs(self):
@@ -212,8 +218,8 @@ class TouchInputManager:
     def define_display(self, width, height):
         self.display = Display(width, height)
 
-    def clear_inputs(self):
-        self.inputs = {0: TInput(0)}
+#     def clear_inputs(self):
+#         self.inputs = {0: TInput(0)}
 
     def load_calibration(self, width, height):
         self.display.load_calibration(width, height)

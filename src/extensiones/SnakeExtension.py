@@ -39,7 +39,7 @@ class SnakeExtension(Extension):
         self.control_colors: List[Color] = [Colors.generate_color(Colors.RED), Colors.generate_color(Colors.GREEN),
                                             Colors.generate_color(Colors.BLUE), Colors.generate_color(Colors.YELLOW)]
         for color in self.control_colors:
-            color.a = 0.15
+            color.a = 0.05
 
         self.snake_elements: List[SnakeElement] = []
         self.speed = 3

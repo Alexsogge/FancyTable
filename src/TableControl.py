@@ -1,8 +1,10 @@
 from modules.Framebuffer import Frame
-from modules.OutputEmulation import OutputEmulation
+#from modules.OutputEmulation import OutputEmulation
 from modules.RenderingEngine import RenderingEngine
-from modules.InputEmulation import InputEmulation
+#from modules.InputEmulation import InputEmulation
 from modules.ExtensionManager import ExtensionManager
+from modules.LEDFrameOutput import LEDFrameOutput
+from modules.TouchInput import TouchInputManager
 from modules.GuiElements import *
 from extensiones import *
 from modules.Helpers import *
@@ -13,15 +15,17 @@ import time
 
 class TableControl:
 
-    def __init__(self):
+    def __init__(self, input_device):
         display = (21, 12)
         # buffer = Frame(display[0], display[1], init_random=False)
 
-        self.output = OutputEmulation(display[0], display[1], 40)
+        # self.output = OutputEmulation(display[0], display[1], 40)
+        self.output = LEDFrameOutput(display[0], display[1])
 
         self.render_engine = RenderingEngine(display[0], display[1], self.output, False)
         self.render_engine.set_tales(True, 50)
-        self.input_device = InputEmulation(self.output)
+        # self.input_device = InputEmulation(self.output)
+        self.input_device = TouchInputManager(input_device, 32000, 34000)
         self.extension_manager = ExtensionManager(self.render_engine)
 
         # self.scroll_text = ScrollingText(self.render_engine, 2, 2, 17, "Langer text", 0.1, Colors.WHITE)
@@ -53,16 +57,16 @@ class TableControl:
         self.input_device.map_inputs_to_screen(self.render_engine)
 
         action: Action
-        for input in self.input_device.get_inputs().values():
-            x, y = self.render_engine.map_input(input.x, input.y)
-            for action in input.actions:
+        for input in list(self.input_device.get_inputs().values()):
+            #  x, y = self.render_engine.map_input(input.x, input.y)
+            for action in input.load_actions():
                 # render_engine.draw_pixel(action.pixels[0], action.pixels[1], Colors.YELLOW)
                 self.extension_manager.process_input(action)
                 # print(action)
                 if action.type == ActionType.RELEASED:
-                    self.input_device.clear_inputs()
+                    self.input_device.clear_inputs(input.z)
                     break
-            input.clear()
+            # input.clear()
 
         self.extension_manager.loop(time_delta)
 
@@ -75,11 +79,11 @@ if __name__ == "__main__":
         sys.exit(1)
 
 
-    web_server_connection = WebServerConnection()
-    web_server_connection.start()
+    #web_server_connection = WebServerConnection()
+    #web_server_connection.start()
     print("Start application")
 
-    control = TableControl()
+    control = TableControl(sys.argv[1])
 
 
     control.main_loop()

@@ -28,6 +28,7 @@ class RenderingEngine:
         self.tails = False
         self.tail_value = 1
         self.output_devices: List[OutputDevice] = []
+        self.brightness = 1
 
         self.frame_buffer = FrameBuffer(width, height, init_random)
         if output is not None:
@@ -313,3 +314,7 @@ class RenderingEngine:
 
     def map_input(self, x, y):
         return int(x * self.frame_buffer.width), int(y * self.frame_buffer.height)
+
+    def set_brightness(self, new_value):
+        self.brightness = new_value
+        self.frame_buffer.brightness = self.brightness

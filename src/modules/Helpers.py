@@ -152,11 +152,15 @@ class FramePixel:
             self.color.g += int((to_color.g / dist) * shift_value)
             self.color.b += int((to_color.b / dist) * shift_value)
 
+    def __mul__(self, other):
+        return FramePixel(self.r * other, self.g * other, self.b * other)
+
 class FrameBuffer:
 
     def __init__(self, width: int, height: int, init_random=False):
         self.size: List[int, int] = [width, height]
         self.buffer: List[List[FramePixel]] = []
+        self.brightness = 1
 
         for i in range(height):
             self.buffer.append([])
@@ -230,8 +234,14 @@ class Action:
         :param y: [0,1]
         :param atype:
         """
-        self.x = x % 1
-        self.y = y % 1
+        if x is None:
+            self.x = None
+        else:
+            self.x = x % 1
+        if y is None:
+            self.y = y
+        else:
+            self.y = y % 1
         self.z = z
         self.type = atype
         self.pixels = (x, y)
@@ -278,7 +288,8 @@ class Input:
 
     def set_pixels(self, render_engine):
         for action in self.actions:
-            action.add_pixels(render_engine.map_input(action.x, action.y))
+            if action.x is not None and action.y is not None:
+                action.add_pixels(render_engine.map_input(action.x, action.y))
 
     def press(self):
         self.actions.append(Action(self.x, self.y, ActionType.PRESSED, self.z))
@@ -295,7 +306,8 @@ class Input:
         # Update Previous Actions
         for action in reversed(self.actions):
             if action.type == ActionType.MOVED:
-                break
+                #break
+                pass
             if action.x is None:
                 action.x = self.x
             if action.y is None:
@@ -304,6 +316,17 @@ class Input:
 
     def clear(self):
         self.actions = []
+
+    def load_actions(self):
+        actions = []
+        for action in self.actions[:]:
+            if action.x is not None and action.y is not None:
+                actions.append(action)
+                self.actions.remove(action)
+            else:
+                break
+
+        return actions
 
     def __str__(self):
         return "Input at {}|{} with {} actions.".format(self.x, self.y, len(self.actions))

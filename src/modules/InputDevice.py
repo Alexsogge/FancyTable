@@ -26,8 +26,8 @@ class InputDevice:
     def get_inputs(self) -> Dict[int, Input]:
         return self.inputs
 
-    def clear_inputs(self):
-        self.inputs = dict()
+    def clear_inputs(self, slot):
+        self.inputs.pop(slot)
 
     def u(self, x) -> float:
         if x is None:

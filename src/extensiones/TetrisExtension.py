@@ -109,11 +109,11 @@ class TetrisExtension(Extension):
         self.tetrominos: List[Tetromino] = list()
         self.game_over = False
         self.game_over_screen = None
-        self.ui_left_color: Color = Color(255, 0, 120, 0.2)
-        self.ui_right_color: Color = Color(120, 255, 0, 0.2)
-        self.ui_drop_color: Color = Color(0, 120, 255, 0.2)
+        self.ui_left_color: Color = Color(255, 0, 120, 0.04)
+        self.ui_right_color: Color = Color(120, 255, 0, 0.04)
+        self.ui_drop_color: Color = Color(0, 120, 255, 0.04)
         self.ui_border_color: Color = Colors.generate_color(Colors.WHITE)
-        self.ui_border_color.a = 0.2
+        self.ui_border_color.a = 0.04
         self.score = 0
         self.icon_pic = self.read_icon("../icons/tetris.ppm")
 
