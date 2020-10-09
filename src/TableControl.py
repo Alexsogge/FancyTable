@@ -26,7 +26,13 @@ class TableControl:
         self.render_engine.set_tales(True, 50)
         # self.input_device = InputEmulation(self.output)
         self.input_device = TouchInputManager(input_device, 32000, 34000)
-        self.extension_manager = ExtensionManager(self.render_engine)
+        # self.extension_manager = ExtensionManager(self.render_engine)
+        # self.input_device = InputEmulation(self.output)
+        self.web_server_connection = WebServerConnection()
+        self.extension_manager = ExtensionManager(self.render_engine, self.web_server_connection)
+        self.web_server_connection.initialize(self.extension_manager)
+        self.web_server_connection.start()
+
 
         # self.scroll_text = ScrollingText(self.render_engine, 2, 2, 17, "Langer text", 0.1, Colors.WHITE)
 

@@ -1,57 +1,60 @@
 import xml.etree.ElementTree as ET
+import json
 import os
 from typing import List, Dict, Tuple, Union
 
+config_file = './config.json'
 
 class ConfigAdapter:
 
+    root = None
+
     def __init__(self, application_name, default_config: Dict):
         self.application_name = application_name
-        print(application_name)
 
-        self.tree = self.open_config_file()
-        self.root = self.tree.getroot()
-        self.config: ET.Element = self.load_config()
-        if len(list(default_config.keys())) > 0:
-            if self.get_value(list(default_config.keys())[0]) is None:
-                self.write_config_values(default_config)
+        if ConfigAdapter.root is None:
+            self.open_config_file()
+
+        self.config = None
+        self.load_config()
+        for key in default_config.keys():
+            if key not in self.config:
+                self.config[key] = default_config[key]
+                self.save_config()
 
 
-    def open_config_file(self) -> ET.ElementTree:
-        if not os.path.isfile('./config.xml'):
-            root = ET.Element('root')
-            tree = ET.ElementTree(root)
-            tree.write('./config.xml')
+    def open_config_file(self):
+        if not os.path.isfile(config_file):
+            with open(config_file, 'w') as outfile:
+                json.dump({}, outfile)
 
-        tree = ET.parse('./config.xml')
-        return tree
+        with open(config_file) as json_file:
+            ConfigAdapter.root = json.load(json_file)
+
 
     def load_config(self):
-        config = self.root.find(self.application_name)
-        print(config)
-        if config is None:
-            ET.SubElement(self.root, self.application_name)
+        if self.application_name in self.root:
+            self.config = self.root[self.application_name]
+        else:
+            self.root[self.application_name] = {}
             self.save_config()
-            config = self.root.find(self.application_name)
-        return config
+            self.config = self.root[self.application_name]
 
     def get_value(self, entry):
-        return self.config.get(entry)
+        return self.config[entry]
 
     def set_value(self, entry, value):
-        self.config.set(entry, str(value))
+        self.config[entry] = value
         self.save_config()
 
     def write_config_values(self, config: Dict):
-        for key, value in config.items():
-            self.set_value(key, value)
+        self.config = config
+        self.save_config()
 
     def read_saved_values(self) -> Dict:
-        config = dict()
-        for key, value in self.config.items():
-            config[key] = value
-        return config
+        return self.config
 
 
     def save_config(self):
-        self.tree.write('./config.xml')
+        with open(config_file, 'w') as outfile:
+            json.dump(self.root, outfile)
