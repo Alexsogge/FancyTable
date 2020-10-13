@@ -200,14 +200,14 @@ class RenderingEngine:
 
     def draw_circle(self, x_0, y_0, r, color: Color, fill=False):
         def symetry_dots(x, y):
-            self.frame_buffer.set_pixel_color(x + x_0, y + y_0, color)
-            self.frame_buffer.set_pixel_color(-x + x_0, y + y_0, color)
-            self.frame_buffer.set_pixel_color(x + x_0, -y + y_0, color)
-            self.frame_buffer.set_pixel_color(-x + x_0, -y + y_0, color)
-            self.frame_buffer.set_pixel_color(y + x_0, x + y_0, color)
-            self.frame_buffer.set_pixel_color(-y + x_0, x + y_0, color)
-            self.frame_buffer.set_pixel_color(y + x_0, -x + y_0, color)
-            self.frame_buffer.set_pixel_color(-y + x_0, -x + y_0, color)
+            self.set_pixel_color(x + x_0, y + y_0, color)
+            self.set_pixel_color(-x + x_0, y + y_0, color)
+            self.set_pixel_color(x + x_0, -y + y_0, color)
+            self.set_pixel_color(-x + x_0, -y + y_0, color)
+            self.set_pixel_color(y + x_0, x + y_0, color)
+            self.set_pixel_color(-y + x_0, x + y_0, color)
+            self.set_pixel_color(y + x_0, -x + y_0, color)
+            self.set_pixel_color(-y + x_0, -x + y_0, color)
 
 
         theta = 0
@@ -222,7 +222,7 @@ class RenderingEngine:
                 self.draw_line(x_0, y_0, round(x), round(y), color)
                 # print("{}->{}, {}->{}".format(x_0, x, y_0, y))
             if x > 0 and y > 0:
-                self.frame_buffer.set_pixel_color(round(x), round(y), color)
+                self.set_pixel_color(round(x), round(y), color)
             theta += step
 
 #         d = -r
@@ -318,3 +318,5 @@ class RenderingEngine:
     def set_brightness(self, new_value):
         self.brightness = new_value
         self.frame_buffer.brightness = self.brightness
+        for output_device in self.output_devices:
+            output_device.set_brightness(self.brightness)

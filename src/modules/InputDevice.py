@@ -10,14 +10,16 @@ class InputDevice:
     def __init__(self, width=0, height=0):
         self.width: int = width
         self.height: int = height
-        self.dimensions: List[int, int] = [self.width, self.height]
 
         self.inputs: Dict[int, Input] = dict()
+
+    @property
+    def dimensions(self) -> List[int]:
+        return [self.width, self.height]
 
     def setup(self, width, height):
         self.width = width
         self.height = height
-        self.dimensions = [self.width, self.height]
 
     @abstractmethod
     def read_inputs(self):

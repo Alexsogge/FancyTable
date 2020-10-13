@@ -1,6 +1,7 @@
 from .Extension import Extension
 from modules.Helpers import ActionType
 from modules.Helpers import *
+import colorsys
 
 class PaintExtension(Extension):
 
@@ -20,7 +21,7 @@ class PaintExtension(Extension):
         self.color_palete_height = max(int(self.dimy / len(self.colors)), 1)
         self.color_palete_width = max(int(self.dimx * 0.05), 1)
         for i, col in enumerate(self.colors):
-            self.render_engine.draw_rectangle(0, i, self.color_palete_width, i + self.color_palete_height, self.colors[i])
+            self.render_engine.draw_rectangle(0, i, self.color_palete_width/2, i + self.color_palete_height, self.colors[i])
 
 
 
@@ -31,12 +32,20 @@ class PaintExtension(Extension):
             # print("Draw:", self.colors[self.current_color[slot]])
             self.render_engine.draw_pixel(x, y, self.current_color[action.z])
 
+        elif x == self.color_palete_width:
+            r, g, b = colorsys.hsv_to_rgb(action.y, 1, 255)
+            new_col = Color(r, g, b)
+            self.current_color[action.z] = new_col
+            self.render_engine.draw_rectangle(self.color_palete_width/2 + 1, 0, self.color_palete_width, self.render_engine.height, new_col)
+
         elif action.type == ActionType.PRESSED:
             for i in range(len(self.colors)):
                 # print(i, "<= ", y, "<", (i+1) * self.color_palete_height)
                 if i <= y < (i+1) * self.color_palete_height:
                     # print("Update color", i)
                     self.current_color[action.z] = Colors.generate_color(self.colors[i])
+                    self.render_engine.draw_rectangle(self.color_palete_width / 2 + 1, 0, self.color_palete_width,
+                                                      self.render_engine.height, self.current_color[action.z])
 
 
     def loop(self, time_delta):

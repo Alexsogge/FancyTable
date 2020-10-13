@@ -35,9 +35,9 @@ class ScreenSaverExtension(Extension):
         if action.type == ActionType.PRESSED:
             self.startpoints[action.z] = StartPoint(action.x, action.y, action.pixels)
         if action.z in self.startpoints and action.type == ActionType.RELEASED:
-            startpoint = self.startpoints[action.z]
+            startpoint = self.startpoints.pop(action.z)
             pixel, angle, movement = startpoint.get_start(action.x, action.y)
-            dot = Dot(pixel[0], pixel[1], self.render_engine, Colors.generate_random(), angle, movement)
+            dot = Dot(action.pixels[0], action.pixels[1], self.render_engine, Colors.generate_random(), angle, movement)
             self.dots.append(dot)
 
     def loop(self, time_delta):
@@ -58,18 +58,18 @@ class StartPoint:
         self.pixel = pixel
 
     def get_start(self, x, y):
-        x_diff = x - self.x
-        y_diff = y - self.y
+        x_diff = self.x - x
+        y_diff = self.y - y
         radians = math.atan2(y_diff, x_diff)
         degrees = math.degrees(radians)
         size = math.hypot(x_diff, y_diff)
-        return self.pixel, degrees, size/35
+        return self.pixel, degrees, size/20
 
 class Dot:
 
     def __init__(self, x, y, render_engine: RenderingEngine, color: Color, angle, movement):
-        self.pos = [x*1000, y*1000]
-        self.movement_step = movement/40
+        self.pos = [x, y]
+        self.movement_step = movement
         self.direction = angle
         self.render_engine = render_engine
         self.dimx, self.dimy = self.render_engine.get_dimensions()
@@ -82,20 +82,20 @@ class Dot:
         self.pos[0] += math.cos(rads) * movement
         self.pos[1] += math.sin(rads) * movement
         self.draw_dot()
-        if self.pos[0] > self.dimx * 1000 or self.pos[0] < 0:  # distinction for first axis
+        if self.pos[0] > self.dimx or self.pos[0] < 0:  # distinction for first axis
             self.direction = (180 - self.direction) % 360
-        if self.pos[1] > self.dimy * 1000 or self.pos[1] < 0:  # distinction for second axis
+        if self.pos[1] > self.dimy or self.pos[1] < 0:  # distinction for second axis
             self.direction = (-self.direction) % 360
         self.laststep = current_milli_time()
 
-        for point in startpoints:
-            if point.pixel[0] == int(self.pos[0]/1000) and point.pixel[1] == int(self.pos[1]/1000):
-                self.direction *= -1
-                break
+        # for point in startpoints:
+        #     if point.pixel[0] == int(self.pos[0]/1000) and point.pixel[1] == int(self.pos[1]/1000):
+        #         self.direction *= -1
+        #         break
 
     def draw_dot(self):
-        pix_x = int(self.pos[0] / 1000)
-        pix_y = int(self.pos[1] / 1000)
+        pix_x = int(self.pos[0])
+        pix_y = int(self.pos[1])
         self.render_engine.draw_pixel(pix_x, pix_y, self.color)
 
 

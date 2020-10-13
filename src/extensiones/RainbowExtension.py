@@ -23,7 +23,7 @@ class RainbowExtension(Extension):
         self.color_step = 0
 
     def process_input(self, action):
-        pass
+        self.switch_speed = 50 * action.x
 
     def loop(self, time_delta):
         if current_milli_time() > self.last_frame + self.switch_speed:

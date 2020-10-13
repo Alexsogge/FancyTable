@@ -2,6 +2,7 @@ from extensiones import *
 from modules.Helpers import *
 from modules.Framebuffer import Frame
 from modules.RenderingEngine import RenderingEngine
+from modules.InputDevice import InputDevice
 import importlib
 import time
 import math
@@ -133,15 +134,14 @@ class Menue:
 
 class ExtensionManager:
 
-
-
-
-    def __init__(self, render_engine: RenderingEngine, websocket_connection=None):
+    def __init__(self, render_engine: RenderingEngine, websocket_connection=None, input_device: InputDevice=None):
         self.render_engine: RenderingEngine = render_engine
         self.websocket_connection = websocket_connection
+        self.input_device = input_device
         Extension.set_global_render_engine(render_engine)
         Extension.set_global_extension_manager(self)
         Extension.set_global_websocket_connection(self.websocket_connection)
+        Extension.set_global_input_device(self.input_device)
 
         self.current_active_extension: int = 0
         self.extensions: List[Extension] = []

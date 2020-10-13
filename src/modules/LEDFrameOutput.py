@@ -17,8 +17,6 @@ class LEDFrameOutput(OutputDevice):
     LED_INVERT = False  # True to invert the signal (when using NPN transistor level shift)
     LED_CHANNEL = 0  # set to '1' for GPIOs 13, 19, 41, 45 or 53
 
-    dimming = 0.003
-
     def __init__(self, width, height):
         super().__init__(width, height)
 
@@ -38,8 +36,8 @@ class LEDFrameOutput(OutputDevice):
                 if y % 2 == 1:
                     x = len(row) - 1 - x
                 led_num = (self.height - 1 - y) * self.width + x
-                R, G, B = max(min(int(255 * col.r * self.dimming), 255), 0), max(min(int(255 * col.g * self.dimming), 255), 0), \
-                          max(min(int(255 * col.b * self.dimming), 255), 0)
+                R, G, B = max(min(int(col.r), 255), 0), max(min(int(col.g), 255), 0), \
+                          max(min(int(col.b), 255), 0)
                 self.strip[led_num] = (R, G, B)
                 # print(led_num)
                 # print("Write on", led_num, pix)
@@ -49,3 +47,6 @@ class LEDFrameOutput(OutputDevice):
         self.dimming += val
         self.dimming = max(min(self.dimming, 1), 0)
 
+    def set_brightness(self, new_brightness: float):
+        self.brightness = max(min(new_brightness, 1), 0)
+        self.strip.brightness = self.brightness

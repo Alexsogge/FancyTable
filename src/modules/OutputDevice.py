@@ -30,3 +30,6 @@ class OutputDevice:
 
     def dimming(self, value: float):
         self.brightness += value
+
+    def set_brightness(self, new_brightness: float):
+        self.brightness = new_brightness

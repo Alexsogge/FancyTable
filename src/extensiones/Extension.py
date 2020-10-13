@@ -10,12 +10,14 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from modules.ExtensionManager import ExtensionManager
     from modules.WebServerConnection import WebServerConnection
+    from modules.InputDevice import InputDevice
 
 
 class Extension(ABC):
     render_engine: RenderingEngine = None
     extension_manager: 'ExtensionManager' = None
     websocket_connection: 'WebServerConnection' = None
+    input_device: 'InputDevice' = None
     default_config = dict()
 
     def __init__(self):
@@ -37,6 +39,14 @@ class Extension(ABC):
         :param render_engine:
         """
         cls.render_engine = render_engine
+
+    @classmethod
+    def set_global_input_device(cls, input_device: 'InputDevice'):
+        """
+        Sets the input device for all extensions
+        :param input_device:
+        """
+        cls.input_device = input_device
 
     @classmethod
     def set_global_extension_manager(cls, mgr: 'ExtensionManager'):

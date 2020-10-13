@@ -15,20 +15,12 @@ class SettingsExtension(Extension):
         pass
 
     def process_input(self, action):
-        updated = False
+        # print(action.y, self.input_device.height)
+        if action.pixels[0] <= 2 and action.pixels[1] <= 2:
+            self.extension_manager.close_extension()
+        else:
+            self.render_engine.set_brightness(1-(action.y-0.1))
 
-        if self.last_pointer is None:
-            self.last_pointer = (action.x, action.y)
-            return
-
-        self.render_engine.set_brightness(action.y)
-        # if action.pixels[0] <= 2 and action.pixels[1] <= 2:
-        #     self.extension_manager.close_extension()
-        # elif abs(self.last_pointer[1] - action.y) > 200:
-        #     self.render_engine.inc_diming(int((self.last_pointer[1] - action.y) / abs(self.last_pointer[1] - action.y)) * 0.00003)
-        #     updated = True
-        # if updated:
-        #     self.last_pointer = (action.x, action.y)
 
     def loop(self, time_delta):
         pass

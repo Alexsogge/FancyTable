@@ -76,4 +76,7 @@ class WebServerConnection(threading.Thread):
 
     def save_data(self, extension: Extension, field_name: str, content: Dict):
         message = {'action': 'save_data','extension_name': type(extension).__name__, 'field_name': field_name, 'content': content}
-        self.ws.send(json.dumps({'message': message}))
+        try:
+            self.ws.send(json.dumps({'message': message}))
+        except Exception:
+            print("Webservice error")
