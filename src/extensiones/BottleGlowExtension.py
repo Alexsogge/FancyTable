@@ -12,7 +12,7 @@ current_milli_time = lambda: int(round(time.time() * 1000))
 
 class BottleGlowExtension(Extension):
 
-    update_speed = 0.1
+    update_speed = 0.01
 
     color_lengh = 5000
     color_step = 0
@@ -46,7 +46,7 @@ class BottleGlowExtension(Extension):
         self.passed_time += time_delta
         for key, point in self.points.items():
             point.expand(time_delta)
-        if self.passed_time > self.update_speed:
+        if self.passed_time > self.update_speed or True:
             self.passed_time = 0
             self.render_engine.clear_buffer()
             for key, point in self.points.items():
@@ -88,7 +88,7 @@ class Dot:
         if self.intense >= 1 and self.direction == 1:
             self.direction = -1
             self.intense = 1
-            print(self.passed_time)
+            # print(self.passed_time)
             self.passed_time = 0
 
         if self.intense <= self.offset and self.direction == -1:
@@ -114,7 +114,10 @@ class Dot:
         :return:
         """
         self.render_engine.draw_pixel(self.x, self.y, self.color)
-        self.render_engine.draw_circle(self.x, self.y, 1, self.color)
+        for i in range(1, int(self.radius)+1):
+            color = self.color.copy()
+            color.a /= i**2
+            self.render_engine.draw_circle(self.x, self.y, i, color)
 
 
     def update_pos(self, x, y):

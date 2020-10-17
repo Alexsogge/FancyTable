@@ -8,7 +8,7 @@ import random
 class Color:
 
     def __init__(self, r: int = 0, g: int = 0, b: int = 0, a: float = 1):
-        self.color: List[int, int, int, float] = [r, g, b, a]
+        self.color: List[int, int, int, float] = [int(r), int(g), int(b), a]
 
     def __repr__(self) -> Dict[str, int]:
         return {'r': self.color[0], 'g': self.color[1], 'b': self.color[2], 'a': self.color[3]}
@@ -83,6 +83,31 @@ class Color:
     @property
     def rgb_string(self) -> str:
         return "#{:02X}{:02X}{:02X}".format(int(self.r), int(self.g), int(self.b))
+
+    def copy(self):
+        return Color(self.r, self.g, self.b, self.a)
+
+    def __mul__(self, other) -> 'Color':
+        if type(other) == float or type(other) == int:
+            return Color(self.r * other, self.g * other, self.b * other, self.a)
+        raise ValueError
+
+    def __truediv__(self, other) -> 'Color':
+        if type(other) == float or type(other) == int:
+            if other == 0:
+                return self
+            return Color(self.r / other, self.g / other, self.b / other, self.a)
+        raise ValueError
+
+    def __add__(self, other) -> 'Color':
+        if type(other) == float or type(other) == int:
+            return Color(self.r + other, self.g + other, self.b + other, self.a)
+        raise ValueError
+
+    def __sub__(self, other) -> 'Color':
+        if type(other) == float or type(other) == int:
+            return Color(self.r - other, self.g - other, self.b - other, self.a)
+        raise ValueError
 
 
 class Colors:

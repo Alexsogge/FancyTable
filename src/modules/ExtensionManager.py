@@ -151,6 +151,7 @@ class ExtensionManager:
         self.load_from_file("../extensions.txt")
         self.menue: Menue = Menue(render_engine, self.extensions)
         self.menue.set_active()
+
         self.default_config = {'brightness': 1.0}
         self.config_adapter: ConfigAdapter = ConfigAdapter("Settings", self.default_config)
         self.config: Dict = self.config_adapter.config

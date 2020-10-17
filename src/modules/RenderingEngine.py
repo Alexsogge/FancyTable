@@ -199,16 +199,7 @@ class RenderingEngine:
         self.draw_rectangle(x_1, y_1, x_1 + width, y_1 + height, color, fill)
 
     def draw_circle(self, x_0, y_0, r, color: Color, fill=False):
-        def symetry_dots(x, y):
-            self.set_pixel_color(x + x_0, y + y_0, color)
-            self.set_pixel_color(-x + x_0, y + y_0, color)
-            self.set_pixel_color(x + x_0, -y + y_0, color)
-            self.set_pixel_color(-x + x_0, -y + y_0, color)
-            self.set_pixel_color(y + x_0, x + y_0, color)
-            self.set_pixel_color(-y + x_0, x + y_0, color)
-            self.set_pixel_color(y + x_0, -x + y_0, color)
-            self.set_pixel_color(-y + x_0, -x + y_0, color)
-
+        painted_pixels = []
 
         theta = 0
         if r == 0:
@@ -218,23 +209,16 @@ class RenderingEngine:
         while theta <= math.radians(360) + step:
             x = x_0 + r * math.cos(theta)
             y = y_0 + r * math.sin(theta)
-            if fill:
-                self.draw_line(x_0, y_0, round(x), round(y), color)
-                # print("{}->{}, {}->{}".format(x_0, x, y_0, y))
-            if x > 0 and y > 0:
-                self.set_pixel_color(round(x), round(y), color)
+            if (round(x), round(y)) not in painted_pixels:
+                if fill:
+                    self.draw_line(x_0, y_0, round(x), round(y), color)
+                    painted_pixels.append((round(x), round(y)))
+                    # print("{}->{}, {}->{}".format(x_0, x, y_0, y))
+                if x > 0 and y > 0:
+                    self.set_pixel_color(round(x), round(y), color)
+                    painted_pixels.append((round(x), round(y)))
             theta += step
 
-#         d = -r
-#         x = r
-#         y = 0
-#         while y <= x:
-#             symetry_dots(x, y)
-#             d = d + 2 * y + 1
-#             y = y + 1
-#             if d > 0:
-#                 d = d - 2 * x + 2
-#                 x = x - 1
 
     def draw_text(self, x_0: int, y_0: int, text: str, color: Color = Colors.WHITE,  width: int = math.inf, offset: int = 0, size: int = 8):
         myfont = ImageFont.truetype("./small_pixel.ttf", size)
