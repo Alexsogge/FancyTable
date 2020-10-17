@@ -21,12 +21,12 @@ class WebServerConnection(threading.Thread):
         self.config_adapter = ConfigAdapter('WebServerConnection', {})
 
         websocket.enableTrace(True)
-        self.ws = websocket.WebSocketApp("ws://localhost:8000/ws/table/",
+        self.ws = websocket.WebSocketApp("ws://192.168.0.11:80/ws/table/",
                                     on_message=self.on_message,
                                     on_error=self.on_error,
                                     on_close=self.on_close)
         self.ws.on_open = self.on_open
-
+        print("Started webserver")
 
         self.running = True
         self.extension_manager: Union[ExtensionManager, None] = None
@@ -36,16 +36,21 @@ class WebServerConnection(threading.Thread):
 
     def run(self):
         self.ws.run_forever()
-
+        print("Webserver running")
 
     def on_message(self, message):
-        print(message)
+        print("WS message", message)
         content = json.loads(message)['message']
         action = content['action']
         if action == 'config_update':
             value = content['config_value']
-            if value == 'True' or value == 'False':
-                value = value == 'True'
+            if type(value) == str:
+                if value.lower() == 'true' or value.lower() == 'false':
+                    value = value.lower() == 'true'
+                try:
+                    value = float(value)
+                except ValueError:
+                    pass
             self.config_adapter.root[content['extension_name']][content['config_key']] = value
             self.config_adapter.save_config()
 
@@ -55,7 +60,7 @@ class WebServerConnection(threading.Thread):
 
 
     def on_error(self, error):
-        print(error)
+        print("WS erroe:", error)
 
     def on_close(self):
         print("### closed ###")

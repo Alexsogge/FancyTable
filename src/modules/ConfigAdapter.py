@@ -7,7 +7,7 @@ config_file = './config.json'
 
 class ConfigAdapter:
 
-    root = None
+    root: Dict = None
 
     def __init__(self, application_name, default_config: Dict):
         self.application_name = application_name

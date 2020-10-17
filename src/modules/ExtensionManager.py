@@ -1,4 +1,5 @@
 from extensiones import *
+from modules.ConfigAdapter import ConfigAdapter
 from modules.Helpers import *
 from modules.Framebuffer import Frame
 from modules.RenderingEngine import RenderingEngine
@@ -150,6 +151,10 @@ class ExtensionManager:
         self.load_from_file("../extensions.txt")
         self.menue: Menue = Menue(render_engine, self.extensions)
         self.menue.set_active()
+        self.default_config = {'brightness': 1.0}
+        self.config_adapter: ConfigAdapter = ConfigAdapter("Settings", self.default_config)
+        self.config: Dict = self.config_adapter.config
+        self.render_engine.set_brightness(self.config['brightness'])
 
     def process_input(self, action):
         # print("Slot: ", slot, "Action:", action)
@@ -168,6 +173,8 @@ class ExtensionManager:
 
 
     def loop(self, time_delta: float):
+        if self.render_engine.brightness != self.config['brightness']:
+            self.render_engine.set_brightness(self.config['brightness'])
         if not self.menue.get_active():
             self.extensions[self.current_active_extension].loop(time_delta)
             if self.menue_switch is not None and self.menue_switch.check_timeout():

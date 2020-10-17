@@ -1,3 +1,4 @@
+from modules.ConfigAdapter import ConfigAdapter
 from .Extension import Extension
 from modules.Helpers import *
 from modules.RenderingEngine import RenderingEngine
@@ -18,6 +19,7 @@ class BottleGlowExtension(Extension):
 
 
     def __init__(self):
+        self.default_config = {'offset': 0.2, 'radius': 1, 'polynom': 2, 'zyklus_time': 8}
         super().__init__()
         self.icon_pic = self.read_icon("../icons/bottleglow.ppm")
         self.dimx, self.dimy = self.render_engine.get_dimensions()
@@ -33,7 +35,8 @@ class BottleGlowExtension(Extension):
 
     def process_input(self, action):
         if action.type == ActionType.PRESSED:
-            self.points[action.z] = Dot(action.pixels[0], action.pixels[1], Colors.generate_random(), self.render_engine)
+            self.points[action.z] = Dot(action.pixels[0], action.pixels[1], Colors.generate_random(),
+                                        self.render_engine, self.config)
         if action.z in self.points and action.type == ActionType.MOVED:
             self.points[action.z].update_pos(action.pixels[0], action.pixels[1])
         if action.z in self.points and action.type == ActionType.RELEASED:
@@ -54,13 +57,13 @@ class BottleGlowExtension(Extension):
 
 class Dot:
 
-    def __init__(self, x, y, color: Color, render_engine: RenderingEngine):
+    def __init__(self, x, y, color: Color, render_engine: RenderingEngine, config: Dict):
         self.x = x
         self.y = y
-        self.offset = 0.2
-        self.radius = 1
-        self.polynom = 2
-        self.zyklus_time = 8
+        self.offset = config['offset']
+        self.radius = config['radius']
+        self.polynom = config['polynom']
+        self.zyklus_time = config['zyklus_time']
         self.expansion_speed = 1/(self.zyklus_time**self.polynom)
         self.expansion_speed_neg = -(1/self.zyklus_time)-(self.expansion_speed*self.zyklus_time**(self.polynom-1))
         self.color: Color = color

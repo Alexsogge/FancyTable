@@ -4,7 +4,7 @@ from asgiref.sync import async_to_sync
 from typing import Dict
 import json
 from os import listdir
-from .models import *
+from web.models import *
 
 config_file = '../src/config.json'
 
@@ -41,13 +41,14 @@ def load_saved_config_file():
                 extension = Extension.objects.create(extension_name=extension_name)
 
             for config_key, config_value in config.items():
-                config_entry_mod = ConfigEntry.objects.filter(extension=extension)
+                print("Load config:", extension, config_key, config_value)
+                config_entry_mod = ConfigEntry.objects.filter(extension=extension, config_key=config_key)
                 if config_entry_mod.exists():
                     config_entry: ConfigEntry = config_entry_mod.first()
                     config_entry.config_value = str(config_value)
                     config_entry.save()
                 else:
-                    ConfigEntry.objects.create(extension=extension, config_key=config_key, config_value=config_value)
+                    ConfigEntry.objects.create(extension=extension, config_key=config_key, config_value=str(config_value))
 
 
 

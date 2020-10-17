@@ -25,7 +25,7 @@ SECRET_KEY = '*%kq!19d3#^=&xs8u=lb#^%k^4wi-()$xpodi$=z=uy&j&uc6@'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.0.11', 'desk.home.henkela.de', 'table.home.henkela.de']
 
 
 # Application definition
