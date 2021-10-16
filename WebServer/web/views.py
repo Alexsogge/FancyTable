@@ -46,16 +46,17 @@ def config(request, extension_id):
             print(formset.errors)
 
     # if a GET (or any other method) we'll create a blank form
-    else:
-        extension = Extension.objects.get(id=extension_id)
-        print("Extension:", extension)
-        entry_formset = modelformset_factory(ConfigEntry, exclude=(), extra=0)
-        entry_forms = entry_formset(queryset=ConfigEntry.objects.filter(extension=extension))
-        print("DISPLAY:", ConfigEntry.objects.filter(extension=extension))
-        return render(request, 'frontend/config.html', {'config_entrys': entry_forms})
 
-    extensions = Extension.objects.all()
-    return render(request, 'frontend/configs.html', {'extensions': extensions})
+    extension = Extension.objects.get(id=extension_id)
+    print("Extension:", extension)
+    entry_formset = modelformset_factory(ConfigEntry, exclude=(), extra=0)
+    entry_forms = entry_formset(queryset=ConfigEntry.objects.filter(extension=extension))
+    print("DISPLAY:", ConfigEntry.objects.filter(extension=extension))
+
+
+    return render(request, 'frontend/config.html', {'config_entrys': entry_forms})
+
+
 
 def extension_select(request):
     return render(request, "frontend/extension_select.html", {'extensions': Extension.objects.filter(displayed=True)})

@@ -31,7 +31,8 @@ class TableControl:
         self.web_server_connection = WebServerConnection()
         self.extension_manager = ExtensionManager(self.render_engine, self.web_server_connection, self.input_device)
         self.web_server_connection.initialize(self.extension_manager)
-        self.web_server_connection.start()
+        self.web_server_connection.connect()
+        # self.web_server_connection.start()
         
         self.output.set_brightness(0.7)
 
@@ -52,6 +53,9 @@ class TableControl:
             self.control_loop(time_delta)
 
             self.render_engine.upload_buffer()
+            # self.web_server_connection.check_connection()
+
+
             time.sleep(0.01)
 
 

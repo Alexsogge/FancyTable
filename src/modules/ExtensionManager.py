@@ -208,6 +208,7 @@ class ExtensionManager:
 
     def open_extension(self, extension_name: str):
         # @TODO: replace extenlist with dict -> replace following
+        print("extension manager open extension", extension_name)
         for i, extension in enumerate(self.extensions):
             print(type(extension).__name__ )
             if type(extension).__name__ == extension_name:
