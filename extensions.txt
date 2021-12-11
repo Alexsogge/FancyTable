@@ -10,3 +10,4 @@ BottleGlowExtension
 TetrisExtension
 PongExtension
 SnakeExtension
+AdventWreathExtension
