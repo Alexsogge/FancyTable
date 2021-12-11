@@ -13,7 +13,6 @@ current_milli_time = lambda: int(round(time.time() * 1000))
 candle_pos = [4, 7, 13, 16]
 
 def get_num_candles():
-    return 4
     now = datetime.datetime.now()
     christmas = datetime.datetime(now.year, 12, 25, 0, 0, 0)
     weekday = christmas.weekday()
