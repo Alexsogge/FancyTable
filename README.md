@@ -1,6 +1,6 @@
 # FancyTable
 ![](doc/images/Header.png)
-<img src="doc/images/drops.gif" width="480" height="270" /><img src="doc/images/dots.gif" width="480" height="270" />
+<img src="doc/images/drops.gif" width="384" height="216" /><img src="doc/images/dots.gif" width="384" height="216" />
 This project transforms an ordinary IKEA LACK Coffee table to a smart lighting table.
 
 
