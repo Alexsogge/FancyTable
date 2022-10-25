@@ -1,7 +1,7 @@
 import curses
 
 
-class EmulatedOutput:
+class FrameEmulation:
 
     window = None
 

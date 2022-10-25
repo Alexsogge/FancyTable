@@ -1,0 +1,7 @@
+adafruit-circuitpython-neopixel
+rpi_ws281x
+graphics
+PySimpleGUI
+Pillow
+numpy
+websocket-client

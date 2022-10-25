@@ -1,0 +1,38 @@
+{% extends 'frontend/base_page.html' %}
+
+{% block title %}
+    Smart Home Control
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col">
+            <div class="d-none d-md-block"><h1>Configs</h1></div>
+            <div class="d-md-none"><h3>Configs</h3></div>
+        </div>
+    </div>
+
+    <form class="form-horizontal" method="POST" action="">
+        {% csrf_token %}
+        {{ config_entrys.management_form }}
+        {% for form in config_entrys %}
+        <div class="row form-row spacer">
+            <div class="col-6">
+                <div class="form-group">
+                    <div class="row" style="display: none;">{{ form.id }}{{  form.extension }}</div>
+                    <div class="row">
+                        {{ form.config_key }}
+                        {{ form.config_value }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <div class="row spacer">
+            <div class="col-4 offset-2">
+                <button type="submit" class="btn btn-block btn-primary">Create</button>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}

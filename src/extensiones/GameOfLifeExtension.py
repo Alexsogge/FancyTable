@@ -1,5 +1,5 @@
 from .Extension import Extension
-from modules.TouchInput import ActionType
+from modules.Helpers import *
 import random
 import colorsys
 
@@ -15,24 +15,18 @@ class CellElement:
         - its color given as rgb values
     """
     _position = (0,0)  # maybe we dont need that
-    _red = 120
-    _green = 120
-    _blue = 120
+    _color = Color(120, 120, 120)
     _alive = False
 
 # ______________________________________________________________________________
     def __init__(self, x=None, y=None, alive=False, r=255, g=255, b=255):
         self._position = (x, y)
         self._alive = alive
-        self._red = r
-        self._green = g
-        self._blue = b
+        self._color = Color(r, g, b)
 
 # ______________________________________________________________________________
     def changeColor(self, r=255, g=255, b=255):
-        self._red = r
-        self._green = g
-        self._blue = b
+        self._color = Color(r, g, b)
 
 # ______________________________________________________________________________
     def kill(self):
@@ -40,25 +34,21 @@ class CellElement:
 
 # ______________________________________________________________________________
     def birth(self):
-        r, g, b = colorsys.hsv_to_rgb(random.random(), 1, 1)
-        R, G, B = int(255 * r), int(255 * g), int(255 * b)
-        self.setColor(R, G, B)
+        self._color = Colors.generate_random()
         self._alive = True
 
     def setColor(self, r, g, b):
-        self._red = r
-        self._green = g
-        self._blue = b
+        self._color = Color(r, g, b)
 # ______________________________________________________________________________
     def living(self):
         return self._alive
 
 # ______________________________________________________________________________
-    def getColor(self):
+    def getColor(self) -> Color:
 
         if not self._alive:
-            return (0, 0, 0)
-        return (self._red, self._green, self._blue)
+            return Colors.BLACK
+        return self._color
 
 
 
@@ -125,17 +115,17 @@ class GameOfLifeExtension(Extension):
             gridTmp.append(line)
 
         self._grid = gridTmp
-        self.framebuffer.set_tales(True, 10)
+        self.render_engine.set_tales(True, 10)
         self.last_step = current_milli_time()
 
-    def process_input(self, slot, action):
+    def process_input(self, action):
         x, y = action.pixels
         self._grid[y][x].birth()
         self.proceed_input = True
-        self.framebuffer.set_pixel_col(x, y, self._grid[y][x].getColor())
+        self.render_engine.draw_pixel(x, y, self._grid[y][x].getColor())
 
-    def loop(self):
-        self.framebuffer.clear_frame()
+    def loop(self, time_delta):
+        self.render_engine.clear_buffer()
         if current_milli_time() > self.last_step + 100:
             self.last_step = current_milli_time()
             if self.proceed_input:
@@ -146,14 +136,14 @@ class GameOfLifeExtension(Extension):
             for i, row in enumerate(self._grid):
                 for j, cell_element in enumerate(row):
                     if cell_element.living():
-                        self.framebuffer.set_pixel_col(j, i, cell_element.getColor())
+                        self.render_engine.draw_pixel(j, i, cell_element.getColor())
 
 
     # ______________________________________________________________________________
     def __init__(self):
         super().__init__()
         self.icon_pic = self.read_icon("../icons/gameoflife.ppm")
-        self._xSize, self._ySize = self.framebuffer.get_dimensions()
+        self._xSize, self._ySize = self.render_engine.frame_buffer.get_dimensions()
 
 
 

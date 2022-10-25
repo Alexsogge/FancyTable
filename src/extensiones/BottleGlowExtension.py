@@ -1,5 +1,7 @@
+from modules.ConfigAdapter import ConfigAdapter
 from .Extension import Extension
-from modules.TouchInput import ActionType
+from modules.Helpers import *
+from modules.RenderingEngine import RenderingEngine
 import time
 import random
 import colorsys
@@ -7,83 +9,94 @@ import math
 
 current_milli_time = lambda: int(round(time.time() * 1000))
 
+
 class BottleGlowExtension(Extension):
 
-    movement_speed = 1
-    last_frame = 0
+    update_speed = 0.01
 
     color_lengh = 5000
     color_step = 0
 
 
     def __init__(self):
+        self.default_config = {'offset': 0.2, 'radius': 1, 'polynom': 2, 'zyklus_time': 8}
         super().__init__()
         self.icon_pic = self.read_icon("../icons/bottleglow.ppm")
-        self.dimx, self.dimy = self.framebuffer.get_dimensions()
+        self.dimx, self.dimy = self.render_engine.get_dimensions()
         self.points = {}
+        self.passed_time = 0
 
     def set_active(self):
-        self.last_frame = current_milli_time()
         self.color_step = 0
         self.points.clear()
         self.dots = []
-        #self.framebuffer.set_tales(True, 2)
+        self.passed_time = 0
+        self.render_engine.set_tales(False)
 
-    def process_input(self, slot, action):
+    def process_input(self, action):
         if action.type == ActionType.PRESSED:
-            r, g, b = colorsys.hsv_to_rgb(random.random(), 1, 1)
-            R, G, B = int(255 * r), int(255 * g), int(255 * b)
-            self.points[slot] = Dot(action.pixels[0], action.pixels[1], [R, G, B], self.framebuffer)
-        if slot in self.points and action.type == ActionType.MOVED:
-            self.points[slot].update_pos(action.pixels[0], action.pixels[1])
-        if slot in self.points and action.type == ActionType.RELEASED:
-            del self.points[slot]
+            self.points[action.z] = Dot(action.pixels[0], action.pixels[1], Colors.generate_random(),
+                                        self.render_engine, self.config)
+        if action.z in self.points and action.type == ActionType.MOVED:
+            self.points[action.z].update_pos(action.pixels[0], action.pixels[1])
+        if action.z in self.points and action.type == ActionType.RELEASED:
+            del self.points[action.z]
 
-    def loop(self):
-        if current_milli_time() > self.last_frame + self.movement_speed:
-            self.framebuffer.clear_frame()
+    def loop(self, time_delta: float):
+        self.passed_time += time_delta
+        for key, point in self.points.items():
+            point.expand(time_delta)
+        if self.passed_time > self.update_speed or True:
+            self.passed_time = 0
+            self.render_engine.clear_buffer()
             for key, point in self.points.items():
-                point.expand()
                 point.draw_drop()
 
-            self.last_frame = current_milli_time()
 
 
 
 class Dot:
 
-    def __init__(self, x, y, color, framebuffer):
+    def __init__(self, x, y, color: Color, render_engine: RenderingEngine, config: Dict):
         self.x = x
         self.y = y
-        self.radius = 1
-        self.expansion_speed = 0.0000005
-        self.color = color
+        self.offset = config['offset']
+        self.radius = config['radius']
+        self.polynom = config['polynom']
+        self.zyklus_time = config['zyklus_time']
+        self.expansion_speed = 1/(self.zyklus_time**self.polynom)
+        self.expansion_speed_neg = -(1/self.zyklus_time)-(self.expansion_speed*self.zyklus_time**(self.polynom-1))
+        self.color: Color = color
         self.initiated = current_milli_time()
-        self.framebuffer = framebuffer
+        self.render_engine: RenderingEngine = render_engine
         self.direction = 1
         self.intense = 1
+        self.passed_time = 0
 
-    def expand(self):
-        self.intense += (current_milli_time() - self.initiated) * (self.expansion_speed * (1000 * (self.intense))) * self.direction
+    def expand(self, time_delta):
+        # self.intense += (current_milli_time() - self.initiated) * (self.expansion_speed * (1000 * (self.intense))) * self.direction
         #print(self.radius)
         #print("Speed:", self.expansion_speed)
         #print("intense:", self.intense)
         #print("mul:", self.expansion_speed * (10 ** self.intense))
-        if self.intense > 3:
+        self.passed_time += time_delta
+        if self.direction == 1:
+            self.intense = self.passed_time**self.polynom * self.expansion_speed + self.offset
+        else:
+            self.intense = self.passed_time**self.polynom * self.expansion_speed + self.expansion_speed_neg * self.passed_time + 1
+        # print(self.intense)
+        if self.intense >= 1 and self.direction == 1:
             self.direction = -1
-        if self.intense < 0.8:
-            self.direction = 1
-        self.initiated = current_milli_time()
+            self.intense = 1
+            # print(self.passed_time)
+            self.passed_time = 0
 
-    def symetry_dots(self, x, y):
-        self.framebuffer.set_pixel_col(x + self.x, y + self.y, [i / self.intense for i in self.color])
-        self.framebuffer.set_pixel_col(-x + self.x, y + self.y, [i / self.intense for i in self.color])
-        self.framebuffer.set_pixel_col(x + self.x, -y + self.y, [i / self.intense for i in self.color])
-        self.framebuffer.set_pixel_col(-x + self.x, -y + self.y, [i / self.intense for i in self.color])
-        self.framebuffer.set_pixel_col(y + self.x, x + self.y, [i / self.intense for i in self.color])
-        self.framebuffer.set_pixel_col(-y + self.x, x + self.y, [i / self.intense for i in self.color])
-        self.framebuffer.set_pixel_col(y + self.x, -x + self.y, [i / self.intense for i in self.color])
-        self.framebuffer.set_pixel_col(-y + self.x, -x + self.y, [i / self.intense for i in self.color])
+        if self.intense <= self.offset and self.direction == -1:
+            self.direction = 1
+            self.intense = self.offset
+            self.passed_time = 0
+        self.color.a = self.intense
+
 
     def draw_drop(self):
         """
@@ -100,17 +113,12 @@ class Dot:
         :param frame_buffer:
         :return:
         """
-        self.framebuffer.set_pixel_col(self.x, self.y, [i / self.intense for i in self.color])
-        d = -self.radius
-        x = self.radius
-        y = 0
-        while y <= x:
-            self.symetry_dots(x, y)
-            d = d + 2 * y + 1
-            y = y + 1
-            if d > 0:
-                d = d - 2 * x + 2
-                x = x - 1
+        self.render_engine.draw_pixel(self.x, self.y, self.color)
+        for i in range(1, int(self.radius)+1):
+            color = self.color.copy()
+            color.a /= i**2
+            self.render_engine.draw_circle(self.x, self.y, i, color)
+
 
     def update_pos(self, x, y):
         self.x = x

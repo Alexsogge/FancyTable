@@ -1,12 +1,13 @@
 from .Extension import Extension
-from modules.TouchInput import ActionType
+from modules.Helpers import *
+from modules.RenderingEngine import RenderingEngine
 import time
 import random
 
 current_milli_time = lambda: int(round(time.time() * 1000))
 
 class WuerfelnExtension(Extension):
-    color = (150, 150, 150)
+    color = Colors.WHITE
 
     def __init__(self):
         super().__init__()
@@ -16,7 +17,7 @@ class WuerfelnExtension(Extension):
         self.roll = False
         self.roll_start = 0
         self.passed_cycles = 0
-        w, h = self.framebuffer.get_dimensions()
+        w, h = self.render_engine.get_dimensions()
         self.dice_size = min(w*0.9, h*0.9)
         self.dice_pos = ((w / 2) - (self.dice_size / 2), round((h / 2) - (self.dice_size / 2)))
         self.eye_size = int(self.dice_size / 5)
@@ -28,7 +29,7 @@ class WuerfelnExtension(Extension):
         pass
 
 
-    def process_input(self, slot, action):
+    def process_input(self, action):
         if self.setup:
             if action.type == ActionType.PRESSED:
                 self.roll = True
@@ -43,10 +44,11 @@ class WuerfelnExtension(Extension):
             self.start_game()
 
 
-    def loop(self):
+    def loop(self, time_delta):
         if self.roll:
             if current_milli_time() > self.roll_start + 100:
-                self.framebuffer.draw_rect(self.dice_pos[0], self.dice_pos[1], self.dice_size, self.dice_size, 0, 0, 0)
+                self.render_engine.draw_rectangle(self.dice_pos[0], self.dice_pos[1], self.dice_pos[0] + self.dice_size,
+                                                  self.dice_pos[1] + self.dice_size, Colors.generate_color(Colors.BLACK))
                 self.draw_dice(random.randint(1, 6))
                 self.passed_cycles += 1
                 if random.random() > 0.85:
@@ -90,31 +92,31 @@ class WuerfelnExtension(Extension):
 
     def draw_eye_on(self, slot):
         if slot == 0:
-            self.framebuffer.draw_rect_col(self.dice_pos[0], self.dice_pos[1], self.eye_size, self.eye_size,
+            self.render_engine.draw_rectangle_wh(self.dice_pos[0], self.dice_pos[1], self.eye_size, self.eye_size,
                                             self.color)
         if slot == 1:
-            self.framebuffer.draw_rect_col(self.dice_pos[0] + 2 * self.eye_size, self.dice_pos[1], self.eye_size,
+            self.render_engine.draw_rectangle_wh(self.dice_pos[0] + 2 * self.eye_size, self.dice_pos[1], self.eye_size,
                                             self.eye_size, self.color)
         if slot == 2:
-            self.framebuffer.draw_rect_col(self.dice_pos[0] + 4 * self.eye_size, self.dice_pos[1], self.eye_size,
+            self.render_engine.draw_rectangle_wh(self.dice_pos[0] + 4 * self.eye_size, self.dice_pos[1], self.eye_size,
                                             self.eye_size, self.color)
         if slot == 3:
-            self.framebuffer.draw_rect_col(self.dice_pos[0], self.dice_pos[1] + 2 * self.eye_size , self.eye_size,
+            self.render_engine.draw_rectangle_wh(self.dice_pos[0], self.dice_pos[1] + 2 * self.eye_size , self.eye_size,
                                             self.eye_size, self.color)
         if slot == 4:
-            self.framebuffer.draw_rect_col(self.dice_pos[0]+ 2 * self.eye_size, self.dice_pos[1] + 2 * self.eye_size,
+            self.render_engine.draw_rectangle_wh(self.dice_pos[0]+ 2 * self.eye_size, self.dice_pos[1] + 2 * self.eye_size,
                                             self.eye_size, self.eye_size, self.color)
         if slot == 5:
-            self.framebuffer.draw_rect_col(self.dice_pos[0]+ 4 * self.eye_size, self.dice_pos[1] + 2 * self.eye_size,
+            self.render_engine.draw_rectangle_wh(self.dice_pos[0]+ 4 * self.eye_size, self.dice_pos[1] + 2 * self.eye_size,
                                             self.eye_size, self.eye_size, self.color)
         if slot == 6:
-            self.framebuffer.draw_rect_col(self.dice_pos[0], self.dice_pos[1] + 4 * self.eye_size , self.eye_size,
+            self.render_engine.draw_rectangle_wh(self.dice_pos[0], self.dice_pos[1] + 4 * self.eye_size , self.eye_size,
                                             self.eye_size, self.color)
         if slot == 7:
-            self.framebuffer.draw_rect_col(self.dice_pos[0]+ 2 * self.eye_size, self.dice_pos[1] + 4 * self.eye_size,
+            self.render_engine.draw_rectangle_wh(self.dice_pos[0]+ 2 * self.eye_size, self.dice_pos[1] + 4 * self.eye_size,
                                             self.eye_size, self.eye_size, self.color)
         if slot == 8:
-            self.framebuffer.draw_rect_col(self.dice_pos[0]+ 4 * self.eye_size, self.dice_pos[1] + 4 * self.eye_size,
+            self.render_engine.draw_rectangle_wh(self.dice_pos[0]+ 4 * self.eye_size, self.dice_pos[1] + 4 * self.eye_size,
                                             self.eye_size, self.eye_size, self.color)
 
 

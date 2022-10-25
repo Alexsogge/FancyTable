@@ -8,3 +8,7 @@ from .SettingsExtension import SettingsExtension
 from .GameOfLifeExtension import GameOfLifeExtension
 from .ScreenSaverExtension import ScreenSaverExtension
 from .BottleGlowExtension import BottleGlowExtension
+from .TetrisExtension import TetrisExtension
+from .PongExtension import PongExtension
+from .SnakeExtension import SnakeExtension
+from .AdventWreathExtension import AdventWreathExtension

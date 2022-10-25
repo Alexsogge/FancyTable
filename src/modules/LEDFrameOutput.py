@@ -1,8 +1,12 @@
 import time
-from neopixel import *
+import neopixel
+import board
 import argparse
+from .Helpers import Color, Colors
+from .OutputDevice import OutputDevice
+from typing import List, Dict, Tuple, Union
 
-class LEDFrameOutput:
+class LEDFrameOutput(OutputDevice):
 
     # LED strip configuration:
     LED_PIN = 18  # GPIO pin connected to the pixels (18 uses PWM!).
@@ -13,33 +17,29 @@ class LEDFrameOutput:
     LED_INVERT = False  # True to invert the signal (when using NPN transistor level shift)
     LED_CHANNEL = 0  # set to '1' for GPIOs 13, 19, 41, 45 or 53
 
-
-    width = 0
-    height = 0
-
-    dimming = 0.003
-
     def __init__(self, width, height):
-        self.width = width
-        self.height = height
+        super().__init__(width, height)
 
-        self.strip = Adafruit_NeoPixel(width*height+1, self.LED_PIN, self.LED_FREQ_HZ, self.LED_DMA, self.LED_INVERT,
-                                  self.LED_BRIGHTNESS, self.LED_CHANNEL)
+
+        # self.strip = Adafruit_NeoPixel(width*height+1, self.LED_PIN, self.LED_FREQ_HZ, self.LED_DMA, self.LED_INVERT,
+        #                           self.LED_BRIGHTNESS, self.LED_CHANNEL)
+        self.strip = neopixel.NeoPixel(board.D18, width*height+1, auto_write=False)
+
         # Intialize the library (must be called once before other functions).
-        self.strip.begin()
+        # self.strip.begin()
 
 
-    def upload(self, frame_matrix):
+    def upload(self, frame_matrix: List[List[Color]]):
         max_led = self.width * self.height
         for y, row in enumerate(frame_matrix):
             for x, col in enumerate(row):
-                pix = col
                 if y % 2 == 1:
                     x = len(row) - 1 - x
                 led_num = (self.height - 1 - y) * self.width + x
-                R, G, B = max(min(int(255 * pix['r'] * self.dimming), 255), 0), max(min(int(255 * pix['g'] * self.dimming), 255), 0), \
-                          max(min(int(255 * pix['b'] * self.dimming), 255), 0)
-                self.strip.setPixelColorRGB(led_num, R, G, B)
+                R, G, B = max(min(int(col.r), 255), 0), max(min(int(col.g), 255), 0), \
+                          max(min(int(col.b), 255), 0)
+                self.strip[led_num] = (R, G, B)
+                # print(led_num)
                 # print("Write on", led_num, pix)
         self.strip.show()
 
@@ -47,3 +47,6 @@ class LEDFrameOutput:
         self.dimming += val
         self.dimming = max(min(self.dimming, 1), 0)
 
+    def set_brightness(self, new_brightness: float):
+        self.brightness = max(min(new_brightness, 1), 0)
+        self.strip.brightness = self.brightness

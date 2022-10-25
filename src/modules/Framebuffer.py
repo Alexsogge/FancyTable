@@ -1,4 +1,13 @@
 from random import randint
+from typing import List, Dict, Tuple, Union
+
+class Color:
+
+    def __init__(self, r:int, g: int, b: int):
+        self.color: List[int, int, int] = [r, g, b]
+
+    def __repr__(self) -> Dict[str, int]:
+        return {'r': self.color[0], 'g': self.color[1], 'b': self.color[2]}
 
 
 class Frame:

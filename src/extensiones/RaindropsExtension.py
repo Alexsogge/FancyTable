@@ -1,5 +1,6 @@
 from .Extension import Extension
-from modules.TouchInput import ActionType
+from modules.Helpers import *
+from modules.RenderingEngine import RenderingEngine
 import time
 from modules import Framebuffer
 import random
@@ -10,12 +11,12 @@ current_milli_time = lambda: int(round(time.time() * 1000))
 
 
 class Raindrop:
-    def __init__(self, x, y, color):
+    def __init__(self, x, y, color: Color):
         self.x = x
         self.y = y
         self.radius = 0
         self.expansion_speed = 0.02
-        self.color = color
+        self.color: Color = color
         self.initiated = current_milli_time()
 
 
@@ -23,18 +24,8 @@ class Raindrop:
         self.radius = (current_milli_time() - self.initiated) * self.expansion_speed
 
 
-    def symetry_dots(self, x, y, frame_buffer):
-        frame_buffer.set_pixel_col(x + self.x, y + self.y, self.color)
-        frame_buffer.set_pixel_col(-x + self.x, y + self.y, self.color)
-        frame_buffer.set_pixel_col(x + self.x, -y + self.y, self.color)
-        frame_buffer.set_pixel_col(-x + self.x, -y + self.y, self.color)
-        frame_buffer.set_pixel_col(y + self.x, x + self.y, self.color)
-        frame_buffer.set_pixel_col(-y + self.x, x + self.y, self.color)
-        frame_buffer.set_pixel_col(y + self.x, -x + self.y, self.color)
-        frame_buffer.set_pixel_col(-y + self.x, -x + self.y, self.color)
 
-
-    def draw_drop(self, frame_buffer: Framebuffer.Frame):
+    def draw_drop(self, render_engine: RenderingEngine):
         """
         d = −r
         x = r
@@ -49,16 +40,7 @@ class Raindrop:
         :param frame_buffer:
         :return:
         """
-        d = -self.radius
-        x = self.radius
-        y = 0
-        while y <= x:
-            self.symetry_dots(x, y, frame_buffer)
-            d = d + 2*y + 1
-            y = y + 1
-            if d > 0:
-                d = d - 2*x + 2
-                x = x - 1
+        render_engine.draw_circle(self.x, self.y, self.radius, self.color)
 
 
 
@@ -78,25 +60,24 @@ class RaindropsExtension(Extension):
 
 
     def set_active(self):
-        self.framebuffer.set_tales(True, 20)
+        self.render_engine.set_tales(True, 20)
 
-    def process_input(self, slot, action):
+    def process_input(self, action):
         if action.type == ActionType.PRESSED:
-            r, g, b = colorsys.hsv_to_rgb(random.random(), 1, 1)
-            R, G, B = int(255 * r), int(255 * g), int(255 * b)
-            self.active_raindrops.append(Raindrop(action.pixels[0], action.pixels[1], (R, G, B)))
+            self.active_raindrops.append(Raindrop(action.pixels[0], action.pixels[1], Colors.generate_random()))
 
 
-    def loop(self):
-        self.framebuffer.clear_frame()
+    def loop(self, time_delta):
+        self.render_engine.clear_buffer()
         i = 0
         while i < len(self.active_raindrops):
             raindrop = self.active_raindrops[i]
-            if raindrop.radius > math.sqrt(self.framebuffer.get_dimensions()[0]**2 + self.framebuffer.get_dimensions()[1]**2):
+            if raindrop.radius > math.sqrt(self.render_engine.frame_buffer.get_dimensions()[0]**2 +
+                                           self.render_engine.frame_buffer.get_dimensions()[1]**2):
             #if raindrop.radius > max(self.framebuffer.get_dimensions()):
                 self.active_raindrops.remove(raindrop)
                 i -= 1
             else:
-                raindrop.draw_drop(self.framebuffer)
+                raindrop.draw_drop(self.render_engine)
                 raindrop.expand()
             i += 1

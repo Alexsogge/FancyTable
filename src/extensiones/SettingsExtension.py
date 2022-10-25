@@ -1,4 +1,6 @@
+from modules.ConfigAdapter import ConfigAdapter
 from .Extension import Extension
+from modules.Helpers import *
 
 
 class SettingsExtension(Extension):
@@ -9,24 +11,19 @@ class SettingsExtension(Extension):
         self.last_pointer = None
 
     def set_active(self):
-        self.framebuffer.draw_rect(2, 2, 20, 20, 255, 255, 255)
-        self.framebuffer.draw_rect(0, 0, 2, 2, 0, 255, 0)
+        self.config = self.extension_manager.config
+        self.render_engine.draw_rectangle_wh(2, 2, 20, 20, Colors.generate_color(Colors.WHITE))
+        self.render_engine.draw_rectangle_wh(0, 0, 2, 2, Colors.RED)
         pass
 
-    def process_input(self, slot, action):
-        updated = False
-
-        if self.last_pointer is None:
-            self.last_pointer = (action.x, action.y)
-            return
-
+    def process_input(self, action):
+        # print(action.y, self.input_device.height)
         if action.pixels[0] <= 2 and action.pixels[1] <= 2:
-            self.extensionmanager.close_extension()
-        elif abs(self.last_pointer[1] - action.y) > 200:
-            self.framebuffer.inc_diming(int((self.last_pointer[1] - action.y) / abs(self.last_pointer[1] - action.y)) * 0.00003)
-            updated = True
-        if updated:
-            self.last_pointer = (action.x, action.y)
+            self.extension_manager.close_extension()
+        else:
+            # self.render_engine.set_brightness(1-(action.y-0.01))
+            self.config['brightness'] = 1-(action.y)
 
-    def loop(self):
+
+    def loop(self, time_delta):
         pass

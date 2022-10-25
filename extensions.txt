@@ -7,3 +7,7 @@ RaindropsExtension
 GameOfLifeExtension
 ScreenSaverExtension
 BottleGlowExtension
+TetrisExtension
+PongExtension
+SnakeExtension
+AdventWreathExtension

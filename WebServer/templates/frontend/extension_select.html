@@ -1,0 +1,35 @@
+{% extends 'frontend/base_page.html' %}
+{% load static %}
+{% load extension_filter %}
+
+{% block title %}
+    Smart Home Control
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col">
+            <div class="d-none d-md-block"><h1>Extensions</h1></div>
+            <div class="d-md-none"><h3>Extensions</h3></div>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for extension in extensions %}
+            <div class="col p-2">
+               <div class="card" style="width: 18rem;">
+                    <img class="card-img-top" src="{% static extension.icon_name|get_icon_path %}" alt="Card image cap">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ extension.extension_name }}</h5>
+                        <a class="btn btn-primary" onclick="apicall('/api/switch_extension/{{ extension.id }}/')">Open</a>
+                        <a href="/side/config/{{ extension.id }}/" class="btn btn-primary">Config</a>
+                        {%  if extension.has_highscores %}
+                            <a href="/side/highscores/{{ extension.id }}/" class="btn btn-primary">Highscores</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}
