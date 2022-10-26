@@ -1,6 +1,13 @@
 # FancyTable
 ![](doc/images/Header.png)
-<img src="doc/images/drops.gif" width="384" height="216" /><img src="doc/images/dots.gif" width="384" height="216" />
+<div style="display: flex; flex-direction: row; flex-wrap: wrap; width: 100%;">
+  <div style="flex-grow: 2; width: 50%; max-width: 50%;">
+    <img src="doc/images/drops.gif"/ style="width: 100%; height: auto;">
+  </div>
+  <div style="flex-grow: 2; width: 50%; max-width: 50%;">
+    <img src="doc/images/dots.gif" style="width: 100%; height: auto;"/>
+  </div>
+</div>
 This project transforms an ordinary IKEA LACK Coffee table to a smart lighting table.
 
 
@@ -12,6 +19,9 @@ The lighting consists of smart WS2812B 5050 RGB LEDs. These LEDs can be addresse
 
 ## Smart functionality
 We will use an Raspberry Pi to controll the LEDs. A simple microcontrolle would be  sufficient but we want additionally host a multitouch input device and a webpage for controlling.
+
+## Usage
+After starting up, the 'main menu' is shown. It displays up to two applications which can be started by tapping. You can tap on the left/right half of the bottom row, to circle through all applications. In an application you can swipe with three fingers from the top to bottom, to close the application. Alternatively you can use the web interface.
 
 #How To
 Now I will guide you through the process to build your own FancyTable. This is not an exact step-by-step instruction. I just give you an overview of the process. Think, measure everything and act by your own.
@@ -64,7 +74,7 @@ Connect the IR touch frame with the Pi.
 ### Install the software
 It could be possible, that the IR touch frame requires some drivers to work. So test it with a display if you can use it as an input device.
 
-Install python3 and requirements.txt. Launch the software by `python3 TableControl.py <device path>`. The device path is the systems device input path to your touch frame (e.g. `/dev/input/event1`).
+Root to directory `src`. Install requirements.txt. Launch the software by `python3 TableControl.py <device path>`. The device path is the systems device input path to your touch frame (e.g. `/dev/input/event1`).
 
 ### Pack everything together
 ![](doc/images/BuildAll.png)
@@ -72,3 +82,6 @@ Place the Pi on the side in the table. Insert the metal sheet with LEDs. Place t
 
 ### That's it
 Now everything should be connected and placed together. But test everything in advance.
+
+## Webserver
+Root to directory `Webserver`. Install requirements.txt. Run the webserver by `sudo python3 manage.py runserver <your_ip>:80`. This is just for testing. For a right deployment you should use a real WSGI server.
