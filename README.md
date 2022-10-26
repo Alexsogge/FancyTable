@@ -8,6 +8,8 @@
     <img src="doc/images/dots.gif" style="width: 100%; height: auto;"/>
   </div>
 </div>
+
+
 This project transforms an ordinary IKEA LACK Coffee table to a smart lighting table.
 
 
